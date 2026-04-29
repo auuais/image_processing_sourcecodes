@@ -35,3 +35,4 @@ python page87_traffic_reference_match_video.py
 - Lecture PDFs are kept locally but excluded from git.
 - Generated `output/` folders are excluded from git to keep the repository lean; the scripts can regenerate them.
 - `submissions/` contains local upload packages and archives that are kept outside version control.
+- Large local-only assets such as `lecture8/data/traffic.mp4` and the midterm `.pptx` are intentionally not tracked.
