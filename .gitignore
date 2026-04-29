@@ -1,0 +1,17 @@
+*.pdf
+*.rar
+*.zip
+
+.idea/
+**/.idea/
+tmp/
+**/tmp/
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+
+output/
+**/output/
+
+submissions/
