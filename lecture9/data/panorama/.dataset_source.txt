@@ -1,0 +1,2 @@
+OpenCV stitching sample dataset: boat1-boat6
+Source: https://github.com/opencv/opencv_extra/tree/4.x/testdata/stitching
