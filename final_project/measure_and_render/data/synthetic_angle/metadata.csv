@@ -1,0 +1,13 @@
+sample_id,filename,true_angle_deg,clutter_level,notes
+angle_01,angle_01.png,24.0,low,clutter_segments=0; nuisance_shapes=1
+angle_02,angle_02.png,32.0,low,clutter_segments=1; nuisance_shapes=1
+angle_03,angle_03.png,41.0,low,clutter_segments=1; nuisance_shapes=2
+angle_04,angle_04.png,55.0,medium,clutter_segments=2; nuisance_shapes=2
+angle_05,angle_05.png,68.0,medium,clutter_segments=2; nuisance_shapes=2
+angle_06,angle_06.png,82.0,medium,clutter_segments=2; nuisance_shapes=3
+angle_07,angle_07.png,97.0,medium,clutter_segments=3; nuisance_shapes=3
+angle_08,angle_08.png,109.0,high,clutter_segments=3; nuisance_shapes=3
+angle_09,angle_09.png,121.0,high,clutter_segments=3; nuisance_shapes=4
+angle_10,angle_10.png,136.0,high,clutter_segments=4; nuisance_shapes=4
+angle_11,angle_11.png,48.0,very_high,clutter_segments=4; nuisance_shapes=5
+angle_12,angle_12.png,73.0,very_high,clutter_segments=5; nuisance_shapes=5

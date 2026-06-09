@@ -1,0 +1,1 @@
+Estimate the angle in degrees between the two main rays in the image. Answer with a single number. Classical CV measurement: the angle between the two principal rays is 96.0 degrees.

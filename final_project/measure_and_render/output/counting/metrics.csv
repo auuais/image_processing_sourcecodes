@@ -1,0 +1,13 @@
+sample_id,true_count,connected_components_count,watershed_count,overlap_level,notes
+count_01,6,6,6,low,touching_pairs=0
+count_02,7,6,7,low,touching_pairs=1
+count_03,8,6,9,medium,touching_pairs=2
+count_04,9,8,9,medium,touching_pairs=2
+count_05,10,7,10,medium,touching_pairs=3
+count_06,11,8,11,medium,touching_pairs=3
+count_07,8,5,8,high,touching_pairs=3
+count_08,9,5,9,high,touching_pairs=4
+count_09,10,6,10,high,touching_pairs=4
+count_10,12,8,12,high,touching_pairs=5
+count_11,13,8,13,very_high,touching_pairs=6
+count_12,14,8,14,very_high,touching_pairs=6

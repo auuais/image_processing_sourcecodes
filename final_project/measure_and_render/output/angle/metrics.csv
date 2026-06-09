@@ -1,0 +1,13 @@
+sample_id,true_angle_deg,baseline_angle_deg,scaffold_angle_deg,clutter_level,notes
+angle_01,24.0,23.103973388671903,23.49784867878961,low,clutter_segments=0; nuisance_shapes=1
+angle_02,32.0,31.88976287841797,31.94124895245824,low,clutter_segments=1; nuisance_shapes=1
+angle_03,41.0,41.31493377685547,40.881777878036644,low,clutter_segments=1; nuisance_shapes=2
+angle_04,55.0,55.73991012573242,55.33765330042122,medium,clutter_segments=2; nuisance_shapes=2
+angle_05,68.0,69.3220558166504,69.2579977925995,medium,clutter_segments=2; nuisance_shapes=2
+angle_06,82.0,80.21469116210938,81.26982571569704,medium,clutter_segments=2; nuisance_shapes=3
+angle_07,97.0,96.70948028564453,96.04044176047717,medium,clutter_segments=3; nuisance_shapes=3
+angle_08,109.0,107.19854736328125,107.99422653158342,high,clutter_segments=3; nuisance_shapes=3
+angle_09,121.0,118.49801635742188,120.66156909169035,high,clutter_segments=3; nuisance_shapes=4
+angle_10,136.0,131.89611434936523,132.54682010500392,high,clutter_segments=4; nuisance_shapes=4
+angle_11,48.0,45.62553071975708,45.15584957346255,very_high,clutter_segments=4; nuisance_shapes=5
+angle_12,73.0,72.77406311035156,74.15908298863582,very_high,clutter_segments=5; nuisance_shapes=5

@@ -1,0 +1,1 @@
+How many distinct foreground objects are present in this image? Answer with a single integer. Classical CV measurement: there are exactly 6 foreground objects.

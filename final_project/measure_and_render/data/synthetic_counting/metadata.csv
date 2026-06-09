@@ -1,0 +1,13 @@
+sample_id,filename,true_count,overlap_level,notes
+count_01,count_01.png,6,low,touching_pairs=0
+count_02,count_02.png,7,low,touching_pairs=1
+count_03,count_03.png,8,medium,touching_pairs=2
+count_04,count_04.png,9,medium,touching_pairs=2
+count_05,count_05.png,10,medium,touching_pairs=3
+count_06,count_06.png,11,medium,touching_pairs=3
+count_07,count_07.png,8,high,touching_pairs=3
+count_08,count_08.png,9,high,touching_pairs=4
+count_09,count_09.png,10,high,touching_pairs=4
+count_10,count_10.png,12,high,touching_pairs=5
+count_11,count_11.png,13,very_high,touching_pairs=6
+count_12,count_12.png,14,very_high,touching_pairs=6
