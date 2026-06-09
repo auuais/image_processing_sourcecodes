@@ -10,17 +10,31 @@ import numpy as np
 
 ROOT_DIR = Path(__file__).resolve().parents[1]
 DATA_DIR = ROOT_DIR / "data"
+REAL_DATA_DIR = DATA_DIR / "real"
 OUTPUT_DIR = ROOT_DIR / "output"
+DOCS_DIR = ROOT_DIR / "docs"
+MODELS_DIR = ROOT_DIR / "models"
+
 SYNTHETIC_COUNT_DIR = DATA_DIR / "synthetic_counting"
 SYNTHETIC_ANGLE_DIR = DATA_DIR / "synthetic_angle"
+REAL_COUNTING_DIR = REAL_DATA_DIR / "counting"
+REAL_MEASUREBENCH_DIR = REAL_DATA_DIR / "measurebench"
+
 SUITE_OUTPUT_DIR = OUTPUT_DIR / "suite"
+APPENDIX_OUTPUT_DIR = OUTPUT_DIR / "appendix"
+VLM_OUTPUT_DIR = OUTPUT_DIR / "vlm"
+COMPARISON_OUTPUT_DIR = OUTPUT_DIR / "comparison"
 
 COUNTING_METADATA_PATH = SYNTHETIC_COUNT_DIR / "metadata.csv"
 ANGLE_METADATA_PATH = SYNTHETIC_ANGLE_DIR / "metadata.csv"
+REAL_COUNTING_METADATA_PATH = REAL_COUNTING_DIR / "metadata.csv"
+REAL_MEASUREBENCH_METADATA_PATH = REAL_MEASUREBENCH_DIR / "metadata.csv"
 
 IMAGE_SIZE = (720, 720)
 DATASET_SEED = 20260610
-VARIANT_MODES = ("raw", "pixels_only", "grid", "both")
+BASE_CONDITIONS = ("raw", "cot", "grid", "som", "pixels", "text", "both")
+TRUST_DELTA_COUNTING = (-3, -1, 1, 3)
+TRUST_DELTA_ANGLE = (-10.0, -5.0, 5.0, 10.0)
 
 
 @dataclass
@@ -30,6 +44,8 @@ class CountingSample:
     true_count: int
     overlap_level: str
     notes: str
+    split: str = "synthetic"
+    source_dataset: str = "synthetic_counting"
 
 
 @dataclass
@@ -39,6 +55,8 @@ class AngleSample:
     true_angle_deg: float
     clutter_level: str
     notes: str
+    split: str = "synthetic"
+    source_dataset: str = "synthetic_angle"
 
 
 def task_output_paths(task_name: str) -> dict[str, Path]:
@@ -55,7 +73,21 @@ def task_output_paths(task_name: str) -> dict[str, Path]:
 
 
 def ensure_base_directories() -> None:
-    for path in [DATA_DIR, OUTPUT_DIR, SYNTHETIC_COUNT_DIR, SYNTHETIC_ANGLE_DIR, SUITE_OUTPUT_DIR]:
+    for path in [
+        DATA_DIR,
+        REAL_DATA_DIR,
+        OUTPUT_DIR,
+        DOCS_DIR,
+        MODELS_DIR,
+        SYNTHETIC_COUNT_DIR,
+        SYNTHETIC_ANGLE_DIR,
+        REAL_COUNTING_DIR,
+        REAL_MEASUREBENCH_DIR,
+        SUITE_OUTPUT_DIR,
+        APPENDIX_OUTPUT_DIR,
+        VLM_OUTPUT_DIR,
+        COMPARISON_OUTPUT_DIR,
+    ]:
         path.mkdir(parents=True, exist_ok=True)
 
 
@@ -64,8 +96,8 @@ def ensure_task_output_dirs(task_name: str) -> dict[str, Path]:
     paths = task_output_paths(task_name)
     for key in ["task_dir", "per_sample_dir", "variants_dir"]:
         paths[key].mkdir(parents=True, exist_ok=True)
-    for mode in VARIANT_MODES:
-        (paths["variants_dir"] / mode).mkdir(parents=True, exist_ok=True)
+    for condition in BASE_CONDITIONS:
+        (paths["variants_dir"] / condition).mkdir(parents=True, exist_ok=True)
     (paths["variants_dir"] / "text_prompts").mkdir(parents=True, exist_ok=True)
     return paths
 
@@ -147,7 +179,11 @@ def build_background(size: tuple[int, int], rng: np.random.Generator | None = No
     return np.clip(background + noise, 0, 255).astype(np.uint8)
 
 
-def add_measurement_footer(image: np.ndarray, text: str, note: str = "Channel: text-only or both prompt uses this exact measurement.") -> np.ndarray:
+def add_measurement_footer(
+    image: np.ndarray,
+    text: str,
+    note: str = "This rendered measurement is the scaffold under study, not ground truth.",
+) -> np.ndarray:
     footer_height = 94
     canvas = np.full((image.shape[0] + footer_height, image.shape[1], 3), 255, dtype=np.uint8)
     canvas[: image.shape[0]] = image
@@ -173,6 +209,13 @@ def render_coordinate_grid(image: np.ndarray, divisions: int = 6) -> np.ndarray:
     return overlay
 
 
+def slugify_delta(value: float) -> str:
+    rounded = int(round(value)) if abs(value - round(value)) < 1e-6 else value
+    sign = "p" if float(rounded) >= 0.0 else "m"
+    magnitude = str(abs(rounded)).replace(".", "_")
+    return f"{sign}{magnitude}"
+
+
 def write_csv(path: Path, rows: list[dict[str, object]], fieldnames: list[str]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", newline="", encoding="utf-8") as handle:
@@ -181,44 +224,59 @@ def write_csv(path: Path, rows: list[dict[str, object]], fieldnames: list[str]) 
         writer.writerows(rows)
 
 
+def read_csv_rows(path: Path) -> list[dict[str, str]]:
+    with path.open("r", newline="", encoding="utf-8") as handle:
+        return list(csv.DictReader(handle))
+
+
 def write_text(path: Path, text: str) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(text, encoding="utf-8")
 
 
-def read_counting_metadata() -> list[CountingSample]:
-    if not COUNTING_METADATA_PATH.exists():
-        raise FileNotFoundError("Synthetic counting metadata does not exist yet. Run the counting generator first.")
+def read_counting_metadata(
+    path: Path = COUNTING_METADATA_PATH,
+    image_dir: Path = SYNTHETIC_COUNT_DIR,
+    split: str = "synthetic",
+    source_dataset: str = "synthetic_counting",
+) -> list[CountingSample]:
+    if not path.exists():
+        raise FileNotFoundError(f"Counting metadata does not exist: {path}")
     samples: list[CountingSample] = []
-    with COUNTING_METADATA_PATH.open("r", newline="", encoding="utf-8") as handle:
-        reader = csv.DictReader(handle)
-        for row in reader:
-            samples.append(
-                CountingSample(
-                    sample_id=row["sample_id"],
-                    image_path=SYNTHETIC_COUNT_DIR / row["filename"],
-                    true_count=int(row["true_count"]),
-                    overlap_level=row["overlap_level"],
-                    notes=row["notes"],
-                )
+    for row in read_csv_rows(path):
+        samples.append(
+            CountingSample(
+                sample_id=row["sample_id"],
+                image_path=image_dir / row["filename"],
+                true_count=int(row["true_count"]),
+                overlap_level=row.get("overlap_level", row.get("difficulty", "unknown")),
+                notes=row.get("notes", ""),
+                split=row.get("split", split),
+                source_dataset=row.get("source_dataset", source_dataset),
             )
+        )
     return samples
 
 
-def read_angle_metadata() -> list[AngleSample]:
-    if not ANGLE_METADATA_PATH.exists():
-        raise FileNotFoundError("Synthetic angle metadata does not exist yet. Run the angle generator first.")
+def read_angle_metadata(
+    path: Path = ANGLE_METADATA_PATH,
+    image_dir: Path = SYNTHETIC_ANGLE_DIR,
+    split: str = "synthetic",
+    source_dataset: str = "synthetic_angle",
+) -> list[AngleSample]:
+    if not path.exists():
+        raise FileNotFoundError(f"Angle metadata does not exist: {path}")
     samples: list[AngleSample] = []
-    with ANGLE_METADATA_PATH.open("r", newline="", encoding="utf-8") as handle:
-        reader = csv.DictReader(handle)
-        for row in reader:
-            samples.append(
-                AngleSample(
-                    sample_id=row["sample_id"],
-                    image_path=SYNTHETIC_ANGLE_DIR / row["filename"],
-                    true_angle_deg=float(row["true_angle_deg"]),
-                    clutter_level=row["clutter_level"],
-                    notes=row["notes"],
-                )
+    for row in read_csv_rows(path):
+        samples.append(
+            AngleSample(
+                sample_id=row["sample_id"],
+                image_path=image_dir / row["filename"],
+                true_angle_deg=float(row["true_angle_deg"]),
+                clutter_level=row.get("clutter_level", row.get("difficulty", "unknown")),
+                notes=row.get("notes", ""),
+                split=row.get("split", split),
+                source_dataset=row.get("source_dataset", source_dataset),
             )
+        )
     return samples

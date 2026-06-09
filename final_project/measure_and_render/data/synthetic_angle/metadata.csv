@@ -1,13 +1,97 @@
-sample_id,filename,true_angle_deg,clutter_level,notes
-angle_01,angle_01.png,24.0,low,clutter_segments=0; nuisance_shapes=1
-angle_02,angle_02.png,32.0,low,clutter_segments=1; nuisance_shapes=1
-angle_03,angle_03.png,41.0,low,clutter_segments=1; nuisance_shapes=2
-angle_04,angle_04.png,55.0,medium,clutter_segments=2; nuisance_shapes=2
-angle_05,angle_05.png,68.0,medium,clutter_segments=2; nuisance_shapes=2
-angle_06,angle_06.png,82.0,medium,clutter_segments=2; nuisance_shapes=3
-angle_07,angle_07.png,97.0,medium,clutter_segments=3; nuisance_shapes=3
-angle_08,angle_08.png,109.0,high,clutter_segments=3; nuisance_shapes=3
-angle_09,angle_09.png,121.0,high,clutter_segments=3; nuisance_shapes=4
-angle_10,angle_10.png,136.0,high,clutter_segments=4; nuisance_shapes=4
-angle_11,angle_11.png,48.0,very_high,clutter_segments=4; nuisance_shapes=5
-angle_12,angle_12.png,73.0,very_high,clutter_segments=5; nuisance_shapes=5
+sample_id,filename,true_angle_deg,clutter_level,notes,split,source_dataset
+angle_001,angle_001.png,16.2,low,clutter_segments=1; nuisance_shapes=2; dark_distractors=0; ray_thickness=12,synthetic,synthetic_angle
+angle_002,angle_002.png,18.9,low,clutter_segments=2; nuisance_shapes=3; dark_distractors=0; ray_thickness=12,synthetic,synthetic_angle
+angle_003,angle_003.png,21.6,low,clutter_segments=1; nuisance_shapes=4; dark_distractors=0; ray_thickness=12,synthetic,synthetic_angle
+angle_004,angle_004.png,24.3,low,clutter_segments=2; nuisance_shapes=2; dark_distractors=0; ray_thickness=12,synthetic,synthetic_angle
+angle_005,angle_005.png,22.3,low,clutter_segments=1; nuisance_shapes=3; dark_distractors=0; ray_thickness=12,synthetic,synthetic_angle
+angle_006,angle_006.png,25.0,low,clutter_segments=2; nuisance_shapes=4; dark_distractors=0; ray_thickness=12,synthetic,synthetic_angle
+angle_007,angle_007.png,27.7,low,clutter_segments=1; nuisance_shapes=2; dark_distractors=0; ray_thickness=12,synthetic,synthetic_angle
+angle_008,angle_008.png,30.4,low,clutter_segments=2; nuisance_shapes=3; dark_distractors=0; ray_thickness=12,synthetic,synthetic_angle
+angle_009,angle_009.png,28.3,low,clutter_segments=1; nuisance_shapes=4; dark_distractors=0; ray_thickness=12,synthetic,synthetic_angle
+angle_010,angle_010.png,31.0,low,clutter_segments=2; nuisance_shapes=2; dark_distractors=0; ray_thickness=12,synthetic,synthetic_angle
+angle_011,angle_011.png,33.8,low,clutter_segments=1; nuisance_shapes=3; dark_distractors=0; ray_thickness=12,synthetic,synthetic_angle
+angle_012,angle_012.png,36.5,low,clutter_segments=2; nuisance_shapes=4; dark_distractors=0; ray_thickness=12,synthetic,synthetic_angle
+angle_013,angle_013.png,34.4,low,clutter_segments=1; nuisance_shapes=2; dark_distractors=0; ray_thickness=12,synthetic,synthetic_angle
+angle_014,angle_014.png,37.1,low,clutter_segments=2; nuisance_shapes=3; dark_distractors=0; ray_thickness=12,synthetic,synthetic_angle
+angle_015,angle_015.png,39.8,low,clutter_segments=1; nuisance_shapes=4; dark_distractors=0; ray_thickness=12,synthetic,synthetic_angle
+angle_016,angle_016.png,42.5,low,clutter_segments=2; nuisance_shapes=2; dark_distractors=0; ray_thickness=12,synthetic,synthetic_angle
+angle_017,angle_017.png,40.5,low,clutter_segments=1; nuisance_shapes=3; dark_distractors=0; ray_thickness=12,synthetic,synthetic_angle
+angle_018,angle_018.png,43.2,low,clutter_segments=2; nuisance_shapes=4; dark_distractors=0; ray_thickness=12,synthetic,synthetic_angle
+angle_019,angle_019.png,45.9,low,clutter_segments=1; nuisance_shapes=2; dark_distractors=0; ray_thickness=12,synthetic,synthetic_angle
+angle_020,angle_020.png,48.6,low,clutter_segments=2; nuisance_shapes=3; dark_distractors=0; ray_thickness=12,synthetic,synthetic_angle
+angle_021,angle_021.png,46.5,low,clutter_segments=1; nuisance_shapes=4; dark_distractors=0; ray_thickness=12,synthetic,synthetic_angle
+angle_022,angle_022.png,49.2,low,clutter_segments=2; nuisance_shapes=2; dark_distractors=0; ray_thickness=12,synthetic,synthetic_angle
+angle_023,angle_023.png,51.9,low,clutter_segments=1; nuisance_shapes=3; dark_distractors=0; ray_thickness=12,synthetic,synthetic_angle
+angle_024,angle_024.png,54.7,low,clutter_segments=2; nuisance_shapes=4; dark_distractors=0; ray_thickness=12,synthetic,synthetic_angle
+angle_025,angle_025.png,52.6,medium,clutter_segments=2; nuisance_shapes=3; dark_distractors=0; ray_thickness=12,synthetic,synthetic_angle
+angle_026,angle_026.png,55.3,medium,clutter_segments=3; nuisance_shapes=4; dark_distractors=0; ray_thickness=12,synthetic,synthetic_angle
+angle_027,angle_027.png,58.0,medium,clutter_segments=2; nuisance_shapes=5; dark_distractors=0; ray_thickness=12,synthetic,synthetic_angle
+angle_028,angle_028.png,60.7,medium,clutter_segments=3; nuisance_shapes=3; dark_distractors=0; ray_thickness=12,synthetic,synthetic_angle
+angle_029,angle_029.png,58.6,medium,clutter_segments=2; nuisance_shapes=4; dark_distractors=0; ray_thickness=12,synthetic,synthetic_angle
+angle_030,angle_030.png,61.4,medium,clutter_segments=3; nuisance_shapes=5; dark_distractors=0; ray_thickness=12,synthetic,synthetic_angle
+angle_031,angle_031.png,64.1,medium,clutter_segments=2; nuisance_shapes=3; dark_distractors=0; ray_thickness=12,synthetic,synthetic_angle
+angle_032,angle_032.png,66.8,medium,clutter_segments=3; nuisance_shapes=4; dark_distractors=0; ray_thickness=12,synthetic,synthetic_angle
+angle_033,angle_033.png,64.7,medium,clutter_segments=2; nuisance_shapes=5; dark_distractors=0; ray_thickness=12,synthetic,synthetic_angle
+angle_034,angle_034.png,67.4,medium,clutter_segments=3; nuisance_shapes=3; dark_distractors=0; ray_thickness=12,synthetic,synthetic_angle
+angle_035,angle_035.png,70.1,medium,clutter_segments=2; nuisance_shapes=4; dark_distractors=0; ray_thickness=12,synthetic,synthetic_angle
+angle_036,angle_036.png,72.9,medium,clutter_segments=3; nuisance_shapes=5; dark_distractors=0; ray_thickness=12,synthetic,synthetic_angle
+angle_037,angle_037.png,70.8,medium,clutter_segments=2; nuisance_shapes=3; dark_distractors=0; ray_thickness=12,synthetic,synthetic_angle
+angle_038,angle_038.png,73.5,medium,clutter_segments=3; nuisance_shapes=4; dark_distractors=0; ray_thickness=12,synthetic,synthetic_angle
+angle_039,angle_039.png,76.2,medium,clutter_segments=2; nuisance_shapes=5; dark_distractors=0; ray_thickness=12,synthetic,synthetic_angle
+angle_040,angle_040.png,78.9,medium,clutter_segments=3; nuisance_shapes=3; dark_distractors=0; ray_thickness=12,synthetic,synthetic_angle
+angle_041,angle_041.png,76.8,medium,clutter_segments=2; nuisance_shapes=4; dark_distractors=0; ray_thickness=12,synthetic,synthetic_angle
+angle_042,angle_042.png,79.5,medium,clutter_segments=3; nuisance_shapes=5; dark_distractors=0; ray_thickness=12,synthetic,synthetic_angle
+angle_043,angle_043.png,82.3,medium,clutter_segments=2; nuisance_shapes=3; dark_distractors=0; ray_thickness=12,synthetic,synthetic_angle
+angle_044,angle_044.png,85.0,medium,clutter_segments=3; nuisance_shapes=4; dark_distractors=0; ray_thickness=12,synthetic,synthetic_angle
+angle_045,angle_045.png,82.9,medium,clutter_segments=2; nuisance_shapes=5; dark_distractors=0; ray_thickness=12,synthetic,synthetic_angle
+angle_046,angle_046.png,85.6,medium,clutter_segments=3; nuisance_shapes=3; dark_distractors=0; ray_thickness=12,synthetic,synthetic_angle
+angle_047,angle_047.png,88.3,medium,clutter_segments=2; nuisance_shapes=4; dark_distractors=0; ray_thickness=12,synthetic,synthetic_angle
+angle_048,angle_048.png,91.0,medium,clutter_segments=3; nuisance_shapes=5; dark_distractors=0; ray_thickness=12,synthetic,synthetic_angle
+angle_049,angle_049.png,89.0,high,clutter_segments=3; nuisance_shapes=4; dark_distractors=1; ray_thickness=11,synthetic,synthetic_angle
+angle_050,angle_050.png,91.7,high,clutter_segments=4; nuisance_shapes=5; dark_distractors=0; ray_thickness=11,synthetic,synthetic_angle
+angle_051,angle_051.png,94.4,high,clutter_segments=3; nuisance_shapes=6; dark_distractors=0; ray_thickness=11,synthetic,synthetic_angle
+angle_052,angle_052.png,97.1,high,clutter_segments=4; nuisance_shapes=4; dark_distractors=1; ray_thickness=11,synthetic,synthetic_angle
+angle_053,angle_053.png,95.0,high,clutter_segments=3; nuisance_shapes=5; dark_distractors=0; ray_thickness=11,synthetic,synthetic_angle
+angle_054,angle_054.png,97.7,high,clutter_segments=4; nuisance_shapes=6; dark_distractors=0; ray_thickness=11,synthetic,synthetic_angle
+angle_055,angle_055.png,100.5,high,clutter_segments=3; nuisance_shapes=4; dark_distractors=1; ray_thickness=11,synthetic,synthetic_angle
+angle_056,angle_056.png,103.2,high,clutter_segments=4; nuisance_shapes=5; dark_distractors=0; ray_thickness=11,synthetic,synthetic_angle
+angle_057,angle_057.png,101.1,high,clutter_segments=3; nuisance_shapes=6; dark_distractors=0; ray_thickness=11,synthetic,synthetic_angle
+angle_058,angle_058.png,103.8,high,clutter_segments=4; nuisance_shapes=4; dark_distractors=1; ray_thickness=11,synthetic,synthetic_angle
+angle_059,angle_059.png,106.5,high,clutter_segments=3; nuisance_shapes=5; dark_distractors=0; ray_thickness=11,synthetic,synthetic_angle
+angle_060,angle_060.png,109.2,high,clutter_segments=4; nuisance_shapes=6; dark_distractors=0; ray_thickness=11,synthetic,synthetic_angle
+angle_061,angle_061.png,107.1,high,clutter_segments=3; nuisance_shapes=4; dark_distractors=1; ray_thickness=11,synthetic,synthetic_angle
+angle_062,angle_062.png,109.9,high,clutter_segments=4; nuisance_shapes=5; dark_distractors=0; ray_thickness=11,synthetic,synthetic_angle
+angle_063,angle_063.png,112.6,high,clutter_segments=3; nuisance_shapes=6; dark_distractors=0; ray_thickness=11,synthetic,synthetic_angle
+angle_064,angle_064.png,115.3,high,clutter_segments=4; nuisance_shapes=4; dark_distractors=1; ray_thickness=11,synthetic,synthetic_angle
+angle_065,angle_065.png,113.2,high,clutter_segments=3; nuisance_shapes=5; dark_distractors=0; ray_thickness=11,synthetic,synthetic_angle
+angle_066,angle_066.png,115.9,high,clutter_segments=4; nuisance_shapes=6; dark_distractors=0; ray_thickness=11,synthetic,synthetic_angle
+angle_067,angle_067.png,118.6,high,clutter_segments=3; nuisance_shapes=4; dark_distractors=1; ray_thickness=11,synthetic,synthetic_angle
+angle_068,angle_068.png,121.4,high,clutter_segments=4; nuisance_shapes=5; dark_distractors=0; ray_thickness=11,synthetic,synthetic_angle
+angle_069,angle_069.png,119.3,high,clutter_segments=3; nuisance_shapes=6; dark_distractors=0; ray_thickness=11,synthetic,synthetic_angle
+angle_070,angle_070.png,122.0,high,clutter_segments=4; nuisance_shapes=4; dark_distractors=1; ray_thickness=11,synthetic,synthetic_angle
+angle_071,angle_071.png,124.7,high,clutter_segments=3; nuisance_shapes=5; dark_distractors=0; ray_thickness=11,synthetic,synthetic_angle
+angle_072,angle_072.png,127.4,high,clutter_segments=4; nuisance_shapes=6; dark_distractors=0; ray_thickness=11,synthetic,synthetic_angle
+angle_073,angle_073.png,125.3,extreme,clutter_segments=4; nuisance_shapes=5; dark_distractors=1; ray_thickness=10,synthetic,synthetic_angle
+angle_074,angle_074.png,128.1,extreme,clutter_segments=5; nuisance_shapes=6; dark_distractors=0; ray_thickness=10,synthetic,synthetic_angle
+angle_075,angle_075.png,130.8,extreme,clutter_segments=4; nuisance_shapes=7; dark_distractors=0; ray_thickness=10,synthetic,synthetic_angle
+angle_076,angle_076.png,133.5,extreme,clutter_segments=5; nuisance_shapes=5; dark_distractors=1; ray_thickness=10,synthetic,synthetic_angle
+angle_077,angle_077.png,131.4,extreme,clutter_segments=4; nuisance_shapes=6; dark_distractors=0; ray_thickness=10,synthetic,synthetic_angle
+angle_078,angle_078.png,134.1,extreme,clutter_segments=5; nuisance_shapes=7; dark_distractors=0; ray_thickness=10,synthetic,synthetic_angle
+angle_079,angle_079.png,136.8,extreme,clutter_segments=4; nuisance_shapes=5; dark_distractors=1; ray_thickness=10,synthetic,synthetic_angle
+angle_080,angle_080.png,139.5,extreme,clutter_segments=5; nuisance_shapes=6; dark_distractors=0; ray_thickness=10,synthetic,synthetic_angle
+angle_081,angle_081.png,137.5,extreme,clutter_segments=4; nuisance_shapes=7; dark_distractors=0; ray_thickness=10,synthetic,synthetic_angle
+angle_082,angle_082.png,140.2,extreme,clutter_segments=5; nuisance_shapes=5; dark_distractors=1; ray_thickness=10,synthetic,synthetic_angle
+angle_083,angle_083.png,142.9,extreme,clutter_segments=4; nuisance_shapes=6; dark_distractors=0; ray_thickness=10,synthetic,synthetic_angle
+angle_084,angle_084.png,145.6,extreme,clutter_segments=5; nuisance_shapes=7; dark_distractors=0; ray_thickness=10,synthetic,synthetic_angle
+angle_085,angle_085.png,143.5,extreme,clutter_segments=4; nuisance_shapes=5; dark_distractors=1; ray_thickness=10,synthetic,synthetic_angle
+angle_086,angle_086.png,146.2,extreme,clutter_segments=5; nuisance_shapes=6; dark_distractors=0; ray_thickness=10,synthetic,synthetic_angle
+angle_087,angle_087.png,149.0,extreme,clutter_segments=4; nuisance_shapes=7; dark_distractors=0; ray_thickness=10,synthetic,synthetic_angle
+angle_088,angle_088.png,151.7,extreme,clutter_segments=5; nuisance_shapes=5; dark_distractors=1; ray_thickness=10,synthetic,synthetic_angle
+angle_089,angle_089.png,149.6,extreme,clutter_segments=4; nuisance_shapes=6; dark_distractors=0; ray_thickness=10,synthetic,synthetic_angle
+angle_090,angle_090.png,152.3,extreme,clutter_segments=5; nuisance_shapes=7; dark_distractors=0; ray_thickness=10,synthetic,synthetic_angle
+angle_091,angle_091.png,155.0,extreme,clutter_segments=4; nuisance_shapes=5; dark_distractors=1; ray_thickness=10,synthetic,synthetic_angle
+angle_092,angle_092.png,157.7,extreme,clutter_segments=5; nuisance_shapes=6; dark_distractors=0; ray_thickness=10,synthetic,synthetic_angle
+angle_093,angle_093.png,155.7,extreme,clutter_segments=4; nuisance_shapes=7; dark_distractors=0; ray_thickness=10,synthetic,synthetic_angle
+angle_094,angle_094.png,158.4,extreme,clutter_segments=5; nuisance_shapes=5; dark_distractors=1; ray_thickness=10,synthetic,synthetic_angle
+angle_095,angle_095.png,161.1,extreme,clutter_segments=4; nuisance_shapes=6; dark_distractors=0; ray_thickness=10,synthetic,synthetic_angle
+angle_096,angle_096.png,163.8,extreme,clutter_segments=5; nuisance_shapes=7; dark_distractors=0; ray_thickness=10,synthetic,synthetic_angle

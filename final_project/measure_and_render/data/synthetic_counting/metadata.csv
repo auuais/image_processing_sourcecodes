@@ -1,13 +1,97 @@
-sample_id,filename,true_count,overlap_level,notes
-count_01,count_01.png,6,low,touching_pairs=0
-count_02,count_02.png,7,low,touching_pairs=1
-count_03,count_03.png,8,medium,touching_pairs=2
-count_04,count_04.png,9,medium,touching_pairs=2
-count_05,count_05.png,10,medium,touching_pairs=3
-count_06,count_06.png,11,medium,touching_pairs=3
-count_07,count_07.png,8,high,touching_pairs=3
-count_08,count_08.png,9,high,touching_pairs=4
-count_09,count_09.png,10,high,touching_pairs=4
-count_10,count_10.png,12,high,touching_pairs=5
-count_11,count_11.png,13,very_high,touching_pairs=6
-count_12,count_12.png,14,very_high,touching_pairs=6
+sample_id,filename,true_count,overlap_level,notes,split,source_dataset
+count_001,count_001.png,6,low,touching_pairs=1; distractors=10; occluders=1; texture_strength=6,synthetic,synthetic_counting
+count_002,count_002.png,7,low,touching_pairs=2; distractors=11; occluders=0; texture_strength=6,synthetic,synthetic_counting
+count_003,count_003.png,8,low,touching_pairs=2; distractors=12; occluders=0; texture_strength=6,synthetic,synthetic_counting
+count_004,count_004.png,9,low,touching_pairs=3; distractors=13; occluders=0; texture_strength=6,synthetic,synthetic_counting
+count_005,count_005.png,10,low,touching_pairs=1; distractors=14; occluders=0; texture_strength=6,synthetic,synthetic_counting
+count_006,count_006.png,11,low,touching_pairs=2; distractors=10; occluders=0; texture_strength=6,synthetic,synthetic_counting
+count_007,count_007.png,12,low,touching_pairs=3; distractors=11; occluders=1; texture_strength=6,synthetic,synthetic_counting
+count_008,count_008.png,13,low,touching_pairs=4; distractors=12; occluders=0; texture_strength=6,synthetic,synthetic_counting
+count_009,count_009.png,14,low,touching_pairs=1; distractors=13; occluders=0; texture_strength=6,synthetic,synthetic_counting
+count_010,count_010.png,15,low,touching_pairs=2; distractors=14; occluders=0; texture_strength=6,synthetic,synthetic_counting
+count_011,count_011.png,16,low,touching_pairs=3; distractors=10; occluders=0; texture_strength=6,synthetic,synthetic_counting
+count_012,count_012.png,17,low,touching_pairs=4; distractors=11; occluders=0; texture_strength=6,synthetic,synthetic_counting
+count_013,count_013.png,18,low,touching_pairs=1; distractors=12; occluders=1; texture_strength=6,synthetic,synthetic_counting
+count_014,count_014.png,19,low,touching_pairs=2; distractors=13; occluders=0; texture_strength=6,synthetic,synthetic_counting
+count_015,count_015.png,20,low,touching_pairs=3; distractors=14; occluders=0; texture_strength=6,synthetic,synthetic_counting
+count_016,count_016.png,21,low,touching_pairs=4; distractors=10; occluders=0; texture_strength=6,synthetic,synthetic_counting
+count_017,count_017.png,22,low,touching_pairs=1; distractors=11; occluders=0; texture_strength=6,synthetic,synthetic_counting
+count_018,count_018.png,23,low,touching_pairs=2; distractors=12; occluders=0; texture_strength=6,synthetic,synthetic_counting
+count_019,count_019.png,24,low,touching_pairs=3; distractors=13; occluders=1; texture_strength=6,synthetic,synthetic_counting
+count_020,count_020.png,25,low,touching_pairs=4; distractors=14; occluders=0; texture_strength=6,synthetic,synthetic_counting
+count_021,count_021.png,25,low,touching_pairs=1; distractors=10; occluders=0; texture_strength=6,synthetic,synthetic_counting
+count_022,count_022.png,25,low,touching_pairs=2; distractors=11; occluders=0; texture_strength=6,synthetic,synthetic_counting
+count_023,count_023.png,25,low,touching_pairs=3; distractors=12; occluders=0; texture_strength=6,synthetic,synthetic_counting
+count_024,count_024.png,25,low,touching_pairs=4; distractors=13; occluders=0; texture_strength=6,synthetic,synthetic_counting
+count_025,count_025.png,6,medium,touching_pairs=2; distractors=20; occluders=2; texture_strength=9,synthetic,synthetic_counting
+count_026,count_026.png,7,medium,touching_pairs=2; distractors=16; occluders=1; texture_strength=9,synthetic,synthetic_counting
+count_027,count_027.png,8,medium,touching_pairs=2; distractors=17; occluders=1; texture_strength=9,synthetic,synthetic_counting
+count_028,count_028.png,9,medium,touching_pairs=3; distractors=18; occluders=1; texture_strength=9,synthetic,synthetic_counting
+count_029,count_029.png,10,medium,touching_pairs=2; distractors=19; occluders=1; texture_strength=9,synthetic,synthetic_counting
+count_030,count_030.png,11,medium,touching_pairs=3; distractors=20; occluders=1; texture_strength=9,synthetic,synthetic_counting
+count_031,count_031.png,12,medium,touching_pairs=4; distractors=16; occluders=2; texture_strength=9,synthetic,synthetic_counting
+count_032,count_032.png,13,medium,touching_pairs=4; distractors=17; occluders=1; texture_strength=9,synthetic,synthetic_counting
+count_033,count_033.png,14,medium,touching_pairs=2; distractors=18; occluders=1; texture_strength=9,synthetic,synthetic_counting
+count_034,count_034.png,15,medium,touching_pairs=3; distractors=19; occluders=1; texture_strength=9,synthetic,synthetic_counting
+count_035,count_035.png,16,medium,touching_pairs=4; distractors=20; occluders=1; texture_strength=9,synthetic,synthetic_counting
+count_036,count_036.png,17,medium,touching_pairs=5; distractors=16; occluders=1; texture_strength=9,synthetic,synthetic_counting
+count_037,count_037.png,18,medium,touching_pairs=2; distractors=17; occluders=2; texture_strength=9,synthetic,synthetic_counting
+count_038,count_038.png,19,medium,touching_pairs=3; distractors=18; occluders=1; texture_strength=9,synthetic,synthetic_counting
+count_039,count_039.png,20,medium,touching_pairs=4; distractors=19; occluders=1; texture_strength=9,synthetic,synthetic_counting
+count_040,count_040.png,21,medium,touching_pairs=5; distractors=20; occluders=1; texture_strength=9,synthetic,synthetic_counting
+count_041,count_041.png,22,medium,touching_pairs=2; distractors=16; occluders=1; texture_strength=9,synthetic,synthetic_counting
+count_042,count_042.png,23,medium,touching_pairs=3; distractors=17; occluders=1; texture_strength=9,synthetic,synthetic_counting
+count_043,count_043.png,24,medium,touching_pairs=4; distractors=18; occluders=2; texture_strength=9,synthetic,synthetic_counting
+count_044,count_044.png,25,medium,touching_pairs=5; distractors=19; occluders=1; texture_strength=9,synthetic,synthetic_counting
+count_045,count_045.png,25,medium,touching_pairs=2; distractors=20; occluders=1; texture_strength=9,synthetic,synthetic_counting
+count_046,count_046.png,25,medium,touching_pairs=3; distractors=16; occluders=1; texture_strength=9,synthetic,synthetic_counting
+count_047,count_047.png,25,medium,touching_pairs=4; distractors=17; occluders=1; texture_strength=9,synthetic,synthetic_counting
+count_048,count_048.png,25,medium,touching_pairs=5; distractors=18; occluders=1; texture_strength=9,synthetic,synthetic_counting
+count_049,count_049.png,6,high,touching_pairs=2; distractors=25; occluders=3; texture_strength=12,synthetic,synthetic_counting
+count_050,count_050.png,7,high,touching_pairs=2; distractors=26; occluders=2; texture_strength=12,synthetic,synthetic_counting
+count_051,count_051.png,8,high,touching_pairs=2; distractors=22; occluders=2; texture_strength=12,synthetic,synthetic_counting
+count_052,count_052.png,9,high,touching_pairs=3; distractors=23; occluders=2; texture_strength=12,synthetic,synthetic_counting
+count_053,count_053.png,10,high,touching_pairs=3; distractors=24; occluders=2; texture_strength=12,synthetic,synthetic_counting
+count_054,count_054.png,11,high,touching_pairs=3; distractors=25; occluders=2; texture_strength=12,synthetic,synthetic_counting
+count_055,count_055.png,12,high,touching_pairs=4; distractors=26; occluders=3; texture_strength=12,synthetic,synthetic_counting
+count_056,count_056.png,13,high,touching_pairs=4; distractors=22; occluders=2; texture_strength=12,synthetic,synthetic_counting
+count_057,count_057.png,14,high,touching_pairs=3; distractors=23; occluders=2; texture_strength=12,synthetic,synthetic_counting
+count_058,count_058.png,15,high,touching_pairs=4; distractors=24; occluders=2; texture_strength=12,synthetic,synthetic_counting
+count_059,count_059.png,16,high,touching_pairs=5; distractors=25; occluders=2; texture_strength=12,synthetic,synthetic_counting
+count_060,count_060.png,17,high,touching_pairs=5; distractors=26; occluders=2; texture_strength=12,synthetic,synthetic_counting
+count_061,count_061.png,18,high,touching_pairs=3; distractors=22; occluders=3; texture_strength=12,synthetic,synthetic_counting
+count_062,count_062.png,19,high,touching_pairs=4; distractors=23; occluders=2; texture_strength=12,synthetic,synthetic_counting
+count_063,count_063.png,20,high,touching_pairs=5; distractors=24; occluders=2; texture_strength=12,synthetic,synthetic_counting
+count_064,count_064.png,21,high,touching_pairs=6; distractors=25; occluders=2; texture_strength=12,synthetic,synthetic_counting
+count_065,count_065.png,22,high,touching_pairs=3; distractors=26; occluders=2; texture_strength=12,synthetic,synthetic_counting
+count_066,count_066.png,23,high,touching_pairs=4; distractors=22; occluders=2; texture_strength=12,synthetic,synthetic_counting
+count_067,count_067.png,24,high,touching_pairs=5; distractors=23; occluders=3; texture_strength=12,synthetic,synthetic_counting
+count_068,count_068.png,25,high,touching_pairs=6; distractors=24; occluders=2; texture_strength=12,synthetic,synthetic_counting
+count_069,count_069.png,25,high,touching_pairs=3; distractors=25; occluders=2; texture_strength=12,synthetic,synthetic_counting
+count_070,count_070.png,25,high,touching_pairs=4; distractors=26; occluders=2; texture_strength=12,synthetic,synthetic_counting
+count_071,count_071.png,25,high,touching_pairs=5; distractors=22; occluders=2; texture_strength=12,synthetic,synthetic_counting
+count_072,count_072.png,25,high,touching_pairs=6; distractors=23; occluders=2; texture_strength=12,synthetic,synthetic_counting
+count_073,count_073.png,6,extreme,touching_pairs=2; distractors=30; occluders=4; texture_strength=15,synthetic,synthetic_counting
+count_074,count_074.png,7,extreme,touching_pairs=2; distractors=31; occluders=3; texture_strength=15,synthetic,synthetic_counting
+count_075,count_075.png,8,extreme,touching_pairs=2; distractors=32; occluders=3; texture_strength=15,synthetic,synthetic_counting
+count_076,count_076.png,9,extreme,touching_pairs=3; distractors=28; occluders=3; texture_strength=15,synthetic,synthetic_counting
+count_077,count_077.png,10,extreme,touching_pairs=3; distractors=29; occluders=3; texture_strength=15,synthetic,synthetic_counting
+count_078,count_078.png,11,extreme,touching_pairs=3; distractors=30; occluders=3; texture_strength=15,synthetic,synthetic_counting
+count_079,count_079.png,12,extreme,touching_pairs=4; distractors=31; occluders=4; texture_strength=15,synthetic,synthetic_counting
+count_080,count_080.png,13,extreme,touching_pairs=4; distractors=32; occluders=3; texture_strength=15,synthetic,synthetic_counting
+count_081,count_081.png,14,extreme,touching_pairs=4; distractors=28; occluders=3; texture_strength=15,synthetic,synthetic_counting
+count_082,count_082.png,15,extreme,touching_pairs=5; distractors=29; occluders=3; texture_strength=15,synthetic,synthetic_counting
+count_083,count_083.png,16,extreme,touching_pairs=5; distractors=30; occluders=3; texture_strength=15,synthetic,synthetic_counting
+count_084,count_084.png,17,extreme,touching_pairs=5; distractors=31; occluders=3; texture_strength=15,synthetic,synthetic_counting
+count_085,count_085.png,18,extreme,touching_pairs=4; distractors=32; occluders=4; texture_strength=15,synthetic,synthetic_counting
+count_086,count_086.png,19,extreme,touching_pairs=5; distractors=28; occluders=3; texture_strength=15,synthetic,synthetic_counting
+count_087,count_087.png,20,extreme,touching_pairs=6; distractors=29; occluders=3; texture_strength=15,synthetic,synthetic_counting
+count_088,count_088.png,21,extreme,touching_pairs=7; distractors=30; occluders=3; texture_strength=15,synthetic,synthetic_counting
+count_089,count_089.png,22,extreme,touching_pairs=4; distractors=31; occluders=3; texture_strength=15,synthetic,synthetic_counting
+count_090,count_090.png,23,extreme,touching_pairs=5; distractors=32; occluders=3; texture_strength=15,synthetic,synthetic_counting
+count_091,count_091.png,24,extreme,touching_pairs=6; distractors=28; occluders=4; texture_strength=15,synthetic,synthetic_counting
+count_092,count_092.png,25,extreme,touching_pairs=7; distractors=29; occluders=3; texture_strength=15,synthetic,synthetic_counting
+count_093,count_093.png,25,extreme,touching_pairs=4; distractors=30; occluders=3; texture_strength=15,synthetic,synthetic_counting
+count_094,count_094.png,25,extreme,touching_pairs=5; distractors=31; occluders=3; texture_strength=15,synthetic,synthetic_counting
+count_095,count_095.png,25,extreme,touching_pairs=6; distractors=32; occluders=3; texture_strength=15,synthetic,synthetic_counting
+count_096,count_096.png,25,extreme,touching_pairs=7; distractors=28; occluders=3; texture_strength=15,synthetic,synthetic_counting

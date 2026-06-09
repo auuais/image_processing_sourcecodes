@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from pathlib import Path
 
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 
-from common import CountingSample, add_measurement_footer, ensure_task_output_dirs, finalize_figure, load_color_image, palette_bgr, plot_bgr, plot_gray, read_counting_metadata, render_coordinate_grid, save_image, task_output_paths, write_csv, write_text
+from baselines import counting_prompt, format_count_text, render_counting_som_overlay, save_variant_image
+from common import APPENDIX_OUTPUT_DIR, CountingSample, TRUST_DELTA_COUNTING, add_measurement_footer, ensure_task_output_dirs, finalize_figure, load_color_image, palette_bgr, plot_bgr, plot_gray, read_counting_metadata, render_coordinate_grid, slugify_delta, write_csv, write_text
 from generate_synthetic_counting_data import main as generate_counting_data
 from harness import PromptVariant, TaskBenchmarkResult, summarize_numeric_predictions, write_manifest
 
@@ -20,8 +22,7 @@ class CountingResult:
     markers: np.ndarray
     overlay_pixels_only: np.ndarray
     overlay_grid: np.ndarray
-    overlay_both: np.ndarray
-    measurement_text: str
+    overlay_som: np.ndarray
 
 
 def segment_objects(image: np.ndarray) -> tuple[np.ndarray, int]:
@@ -66,24 +67,16 @@ def watershed_count(image: np.ndarray, binary_mask: np.ndarray) -> tuple[np.ndar
     return markers, centroids
 
 
-def render_pixels_overlay(image: np.ndarray, centroids: list[tuple[int, int]], count: int) -> np.ndarray:
+def render_pixels_overlay(image: np.ndarray, centroids: list[tuple[int, int]], count_value: int, include_total: bool) -> np.ndarray:
     overlay = image.copy()
     colors = palette_bgr()
     for index, (center_x, center_y) in enumerate(centroids, start=1):
         color = colors[(index - 1) % len(colors)]
         cv2.circle(overlay, (center_x, center_y), 17, color, -1, cv2.LINE_AA)
         cv2.circle(overlay, (center_x, center_y), 17, (20, 20, 20), 2, cv2.LINE_AA)
-        cv2.putText(
-            overlay,
-            str(index),
-            (center_x - 8, center_y + 7),
-            cv2.FONT_HERSHEY_SIMPLEX,
-            0.62,
-            (255, 255, 255),
-            2,
-            cv2.LINE_AA,
-        )
-    cv2.putText(overlay, f"count={count}", (22, 38), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (30, 30, 30), 3, cv2.LINE_AA)
+        cv2.putText(overlay, str(index), (center_x - 8, center_y + 7), cv2.FONT_HERSHEY_SIMPLEX, 0.62, (255, 255, 255), 2, cv2.LINE_AA)
+    if include_total:
+        cv2.putText(overlay, f"count={count_value}", (22, 38), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (30, 30, 30), 3, cv2.LINE_AA)
     return overlay
 
 
@@ -103,11 +96,10 @@ def count_sample(sample: CountingSample) -> CountingResult:
     binary_mask, cc_count = segment_objects(image)
     markers, centroids = watershed_count(image, binary_mask)
     watershed_total = len(centroids)
-    measurement_text = f"Classical CV measurement: there are exactly {watershed_total} foreground objects."
 
-    pixels_overlay = render_pixels_overlay(image, centroids, watershed_total)
+    pixels_overlay = render_pixels_overlay(image, centroids, watershed_total, include_total=True)
+    som_overlay = render_counting_som_overlay(image, centroids)
     grid_overlay = render_coordinate_grid(image)
-    both_overlay = add_measurement_footer(pixels_overlay, measurement_text)
 
     return CountingResult(
         binary_mask=binary_mask,
@@ -117,49 +109,82 @@ def count_sample(sample: CountingSample) -> CountingResult:
         markers=markers,
         overlay_pixels_only=pixels_overlay,
         overlay_grid=grid_overlay,
-        overlay_both=both_overlay,
-        measurement_text=measurement_text,
+        overlay_som=som_overlay,
     )
 
 
-def save_sample_figure(per_sample_dir, sample: CountingSample, image: np.ndarray, result: CountingResult) -> None:
+def save_sample_figure(per_sample_dir: Path, sample: CountingSample, image: np.ndarray, result: CountingResult) -> None:
     fig, axes = plt.subplots(2, 2, figsize=(14, 12))
     plot_bgr(axes[0, 0], image, f"{sample.sample_id}: raw image")
     plot_gray(axes[0, 1], result.binary_mask, f"Binary mask (CC count={result.connected_components_count})")
     plot_bgr(axes[1, 0], markers_to_color(result.markers), f"Watershed labels (count={result.watershed_count})")
-    plot_bgr(axes[1, 1], result.overlay_pixels_only, "Pixels-only scaffold")
+    plot_bgr(axes[1, 1], result.overlay_pixels_only, "Pixels scaffold")
     finalize_figure(fig, per_sample_dir / f"{sample.sample_id}_summary.png")
 
 
-def build_prompt_variants(variants_dir, sample: CountingSample, image: np.ndarray, result: CountingResult) -> list[PromptVariant]:
-    raw_path = save_image(variants_dir / "raw" / f"{sample.sample_id}.png", image)
-    pixels_path = save_image(variants_dir / "pixels_only" / f"{sample.sample_id}.png", result.overlay_pixels_only)
-    grid_path = save_image(variants_dir / "grid" / f"{sample.sample_id}.png", result.overlay_grid)
-    both_path = save_image(variants_dir / "both" / f"{sample.sample_id}.png", result.overlay_both)
+def write_prompt_file(text_prompt_dir: Path, sample_id: str, condition: str, prompt: str) -> None:
+    safe_condition = condition.replace("+", "p").replace("-", "m")
+    write_text(text_prompt_dir / f"{sample_id}_{safe_condition}.txt", prompt + "\n")
 
-    prompt_base = "How many distinct foreground objects are present in this image? Answer with a single integer."
-    text_only_prompt = f"{prompt_base} {result.measurement_text}"
-    both_prompt = f"{prompt_base} Use the overlaid numbered markers and the provided measurement text."
-    raw_prompt = prompt_base
-    pixels_prompt = f"{prompt_base} Use the overlaid numbered markers to count objects."
-    grid_prompt = "How many distinct foreground objects are present in this grid-labeled image? Answer with a single integer."
 
-    (variants_dir / "text_prompts" / f"{sample.sample_id}.txt").write_text(text_only_prompt + "\n", encoding="utf-8")
+def build_prompt_variants(variants_dir: Path, sample: CountingSample, image: np.ndarray, result: CountingResult) -> list[PromptVariant]:
+    raw_path = save_variant_image(variants_dir, "raw", sample.sample_id, image)
+    grid_path = save_variant_image(variants_dir, "grid", sample.sample_id, result.overlay_grid)
+    som_path = save_variant_image(variants_dir, "som", sample.sample_id, result.overlay_som)
+    pixels_path = save_variant_image(variants_dir, "pixels", sample.sample_id, result.overlay_pixels_only)
 
-    return [
-        PromptVariant("counting", sample.sample_id, "raw", str(raw_path), raw_prompt, str(sample.true_count), result.measurement_text),
-        PromptVariant("counting", sample.sample_id, "pixels_only", str(pixels_path), pixels_prompt, str(sample.true_count), result.measurement_text),
-        PromptVariant("counting", sample.sample_id, "text_only", str(raw_path), text_only_prompt, str(sample.true_count), result.measurement_text),
-        PromptVariant("counting", sample.sample_id, "both", str(both_path), both_prompt, str(sample.true_count), result.measurement_text),
-        PromptVariant("counting", sample.sample_id, "grid", str(grid_path), grid_prompt, str(sample.true_count), result.measurement_text),
+    measured_value = int(result.watershed_count)
+    measured_text = format_count_text(measured_value)
+    both_image = add_measurement_footer(result.overlay_pixels_only, measured_text)
+    both_path = save_variant_image(variants_dir, "both", sample.sample_id, both_image)
+
+    variants = [
+        PromptVariant("counting", sample.sample_id, sample.split, sample.source_dataset, sample.overlap_level, sample.notes, "raw", "raw", str(raw_path), counting_prompt("raw"), str(sample.true_count), float(sample.true_count), 0.0, "", None, 0.0, "count"),
+        PromptVariant("counting", sample.sample_id, sample.split, sample.source_dataset, sample.overlap_level, sample.notes, "cot", "cot", str(raw_path), counting_prompt("cot"), str(sample.true_count), float(sample.true_count), 0.0, "", None, 0.0, "count"),
+        PromptVariant("counting", sample.sample_id, sample.split, sample.source_dataset, sample.overlap_level, sample.notes, "grid", "grid", str(grid_path), counting_prompt("grid"), str(sample.true_count), float(sample.true_count), 0.0, "", None, 0.0, "count"),
+        PromptVariant("counting", sample.sample_id, sample.split, sample.source_dataset, sample.overlap_level, sample.notes, "som", "som", str(som_path), counting_prompt("som"), str(sample.true_count), float(sample.true_count), 0.0, "", None, 0.0, "count"),
+        PromptVariant("counting", sample.sample_id, sample.split, sample.source_dataset, sample.overlap_level, sample.notes, "pixels", "pixels", str(pixels_path), counting_prompt("pixels"), str(sample.true_count), float(sample.true_count), 0.0, measured_text, float(measured_value), 0.0, "count"),
+        PromptVariant("counting", sample.sample_id, sample.split, sample.source_dataset, sample.overlap_level, sample.notes, "text", "text", str(raw_path), counting_prompt("text", measured_text), str(sample.true_count), float(sample.true_count), 0.0, measured_text, float(measured_value), 0.0, "count"),
+        PromptVariant("counting", sample.sample_id, sample.split, sample.source_dataset, sample.overlap_level, sample.notes, "both", "both", str(both_path), counting_prompt("both", measured_text), str(sample.true_count), float(sample.true_count), 0.0, measured_text, float(measured_value), 0.0, "count"),
     ]
 
+    write_prompt_file(variants_dir / "text_prompts", sample.sample_id, "text", counting_prompt("text", measured_text))
+    write_prompt_file(variants_dir / "text_prompts", sample.sample_id, "both", counting_prompt("both", measured_text))
 
-def write_results_markdown(path, rows: list[dict[str, object]], baseline_summary, scaffold_summary) -> None:
+    for delta in TRUST_DELTA_COUNTING:
+        injected_value = max(0, measured_value + int(delta))
+        perturbation_text = format_count_text(injected_value)
+        suffix = f"delta_{slugify_delta(delta)}"
+
+        perturbed_pixels = render_pixels_overlay(image, result.centroids, injected_value, include_total=True)
+        perturbed_pixels_path = save_variant_image(variants_dir, "pixels", sample.sample_id, perturbed_pixels, suffix=suffix)
+        perturbed_both_image = add_measurement_footer(perturbed_pixels, perturbation_text)
+        perturbed_both_path = save_variant_image(variants_dir, "both", sample.sample_id, perturbed_both_image, suffix=suffix)
+
+        pixels_condition = f"pixels_delta_{slugify_delta(delta)}"
+        text_condition = f"text_delta_{slugify_delta(delta)}"
+        both_condition = f"both_delta_{slugify_delta(delta)}"
+        text_prompt = counting_prompt("text", perturbation_text)
+        both_prompt = counting_prompt("both", perturbation_text)
+
+        variants.extend(
+            [
+                PromptVariant("counting", sample.sample_id, sample.split, sample.source_dataset, sample.overlap_level, sample.notes, pixels_condition, "pixels", str(perturbed_pixels_path), counting_prompt("pixels"), str(sample.true_count), float(sample.true_count), 0.0, perturbation_text, float(injected_value), float(delta), "count"),
+                PromptVariant("counting", sample.sample_id, sample.split, sample.source_dataset, sample.overlap_level, sample.notes, text_condition, "text", str(raw_path), text_prompt, str(sample.true_count), float(sample.true_count), 0.0, perturbation_text, float(injected_value), float(delta), "count"),
+                PromptVariant("counting", sample.sample_id, sample.split, sample.source_dataset, sample.overlap_level, sample.notes, both_condition, "both", str(perturbed_both_path), both_prompt, str(sample.true_count), float(sample.true_count), 0.0, perturbation_text, float(injected_value), float(delta), "count"),
+            ]
+        )
+        write_prompt_file(variants_dir / "text_prompts", sample.sample_id, text_condition, text_prompt)
+        write_prompt_file(variants_dir / "text_prompts", sample.sample_id, both_condition, both_prompt)
+
+    return variants
+
+
+def write_results_markdown(path: Path, rows: list[dict[str, object]], baseline_summary, scaffold_summary) -> None:
     lines = [
-        "# Counting Benchmark",
+        "# Counting Measurement Quality",
         "",
-        "Synthetic counting benchmark for Measure-and-Render.",
+        "This appendix reports classical measurement quality, which is only a precondition for the frozen-VLM study.",
         "",
         "## Aggregate results",
         "",
@@ -181,21 +206,21 @@ def write_results_markdown(path, rows: list[dict[str, object]], baseline_summary
     write_text(path, "\n".join(lines) + "\n")
 
 
-def save_summary_plot(path, rows: list[dict[str, object]]) -> None:
+def save_summary_plot(path: Path, rows: list[dict[str, object]]) -> None:
     sample_ids = [str(row["sample_id"]) for row in rows]
     truth = np.array([int(row["true_count"]) for row in rows])
     cc = np.array([int(row["connected_components_count"]) for row in rows])
     ws = np.array([int(row["watershed_count"]) for row in rows])
 
     x = np.arange(len(rows))
-    fig, ax = plt.subplots(figsize=(14, 6))
+    fig, ax = plt.subplots(figsize=(16, 6))
     ax.plot(x, truth, marker="o", linewidth=2.5, label="Ground truth")
-    ax.plot(x, cc, marker="s", linewidth=2.0, label="Connected components")
-    ax.plot(x, ws, marker="^", linewidth=2.0, label="Watershed scaffold")
-    ax.set_xticks(x)
-    ax.set_xticklabels(sample_ids, rotation=30, ha="right")
+    ax.plot(x, cc, marker="s", linewidth=1.7, label="Connected components")
+    ax.plot(x, ws, marker="^", linewidth=1.7, label="Watershed scaffold")
+    ax.set_xticks(x[:: max(1, len(rows) // 16)])
+    ax.set_xticklabels(sample_ids[:: max(1, len(rows) // 16)], rotation=30, ha="right")
     ax.set_ylabel("Object count")
-    ax.set_title("Synthetic counting benchmark")
+    ax.set_title("Counting measurement quality precondition")
     ax.grid(True, alpha=0.3)
     ax.legend()
     finalize_figure(fig, path)
@@ -230,11 +255,7 @@ def run_counting_benchmark() -> TaskBenchmarkResult:
             }
         )
 
-    write_csv(
-        paths["metrics_path"],
-        metric_rows,
-        fieldnames=["sample_id", "true_count", "connected_components_count", "watershed_count", "overlap_level", "notes"],
-    )
+    write_csv(paths["metrics_path"], metric_rows, fieldnames=["sample_id", "true_count", "connected_components_count", "watershed_count", "overlap_level", "notes"])
     write_manifest(paths["manifest_path"], manifest_variants)
 
     baseline_summary = summarize_numeric_predictions(baseline_pairs, exact_tolerance=0.0)
@@ -253,6 +274,14 @@ def run_counting_benchmark() -> TaskBenchmarkResult:
         results_path=paths["results_path"],
         summary_plot_path=paths["summary_plot_path"],
         manifest_variants=manifest_variants,
+    )
+
+
+def write_measurement_quality_appendix(result: TaskBenchmarkResult) -> None:
+    APPENDIX_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    write_text(
+        APPENDIX_OUTPUT_DIR / "measurement_quality_note.txt",
+        "Classical measurement quality is a precondition for the VLM study, not the dependent variable.\n",
     )
 
 

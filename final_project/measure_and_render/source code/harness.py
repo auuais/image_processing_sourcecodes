@@ -11,11 +11,21 @@ import numpy as np
 class PromptVariant:
     task: str
     sample_id: str
-    mode: str
+    split: str
+    source_dataset: str
+    difficulty: str
+    notes: str
+    condition: str
+    base_condition: str
     image_path: str
     prompt: str
     expected_answer: str
+    expected_value: float
+    tolerance: float
     measurement_text: str
+    measurement_value: float | None
+    perturbation: float
+    unit: str
 
 
 @dataclass
@@ -51,8 +61,28 @@ def write_manifest(path: Path, variants: list[PromptVariant]) -> None:
             handle.write(json.dumps(asdict(variant), ensure_ascii=True) + "\n")
 
 
+def load_manifest(path: Path) -> list[dict[str, object]]:
+    rows: list[dict[str, object]] = []
+    with path.open("r", encoding="utf-8") as handle:
+        for line in handle:
+            line = line.strip()
+            if line:
+                rows.append(json.loads(line))
+    return rows
+
+
 def combine_manifests(path: Path, variants: list[PromptVariant]) -> None:
-    write_manifest(path, variants)
+    ordered = sorted(
+        variants,
+        key=lambda variant: (
+            variant.task,
+            variant.split,
+            variant.sample_id,
+            variant.base_condition,
+            float(variant.perturbation),
+        ),
+    )
+    write_manifest(path, ordered)
 
 
 def _bootstrap_mae(errors: np.ndarray, bootstrap_samples: int = 2000, seed: int = 20260610) -> tuple[float, float]:

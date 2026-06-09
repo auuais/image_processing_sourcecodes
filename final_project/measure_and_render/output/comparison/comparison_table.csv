@@ -1,0 +1,8 @@
+method,trained,labels_needed,model_scope,task_alignment,n,angle_mae_deg,within_5deg_accuracy,source,notes
+2603.06459 text output baseline,no,no,best reported text-path baseline,continuous angle MAE (paper task: hand joint angles),,20.0000,,arXiv:2603.06459,Reported headline deficit from the paper abstract and protocol notes.
+2603.06459 linear probe on frozen features,yes,yes,trained readout on frozen visual features,continuous angle MAE (paper task: hand joint angles),,6.1000,,arXiv:2603.06459,Reported headline linear-probe number from the paper abstract and protocol notes.
+2603.06459 LoRA readout,yes,yes,LoRA-finetuned text pathway,continuous angle MAE (paper task: hand joint angles),,6.5000,,arXiv:2603.06459,Reported headline LoRA number from the paper abstract and protocol notes.
+Ours: raw VLM (qwen2.5-vl-3b),no,no,Qwen/Qwen2.5-VL-3B-Instruct,synthetic continuous-angle benchmark in this repo,96,49.9438,7.29,Measure-and-Render,"95% MAE CI: [43.2156, 56.8834]"
+Ours: scaffold-pixels (qwen2.5-vl-3b),no,no,Qwen/Qwen2.5-VL-3B-Instruct,synthetic continuous-angle benchmark in this repo,96,2.7698,95.83,Measure-and-Render,"95% MAE CI: [1.0312, 5.8594]"
+Ours: scaffold-text (qwen2.5-vl-3b),no,no,Qwen/Qwen2.5-VL-3B-Instruct,synthetic continuous-angle benchmark in this repo,96,3.0219,90.62,Measure-and-Render,"95% MAE CI: [1.4604, 5.6045]"
+Ours: scaffold-both (qwen2.5-vl-3b),no,no,Qwen/Qwen2.5-VL-3B-Instruct,synthetic continuous-angle benchmark in this repo,96,2.9885,92.71,Measure-and-Render,"95% MAE CI: [1.1832, 6.0509]"

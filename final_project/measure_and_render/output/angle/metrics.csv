@@ -1,13 +1,97 @@
 sample_id,true_angle_deg,baseline_angle_deg,scaffold_angle_deg,clutter_level,notes
-angle_01,24.0,23.103973388671903,23.49784867878961,low,clutter_segments=0; nuisance_shapes=1
-angle_02,32.0,31.88976287841797,31.94124895245824,low,clutter_segments=1; nuisance_shapes=1
-angle_03,41.0,41.31493377685547,40.881777878036644,low,clutter_segments=1; nuisance_shapes=2
-angle_04,55.0,55.73991012573242,55.33765330042122,medium,clutter_segments=2; nuisance_shapes=2
-angle_05,68.0,69.3220558166504,69.2579977925995,medium,clutter_segments=2; nuisance_shapes=2
-angle_06,82.0,80.21469116210938,81.26982571569704,medium,clutter_segments=2; nuisance_shapes=3
-angle_07,97.0,96.70948028564453,96.04044176047717,medium,clutter_segments=3; nuisance_shapes=3
-angle_08,109.0,107.19854736328125,107.99422653158342,high,clutter_segments=3; nuisance_shapes=3
-angle_09,121.0,118.49801635742188,120.66156909169035,high,clutter_segments=3; nuisance_shapes=4
-angle_10,136.0,131.89611434936523,132.54682010500392,high,clutter_segments=4; nuisance_shapes=4
-angle_11,48.0,45.62553071975708,45.15584957346255,very_high,clutter_segments=4; nuisance_shapes=5
-angle_12,73.0,72.77406311035156,74.15908298863582,very_high,clutter_segments=5; nuisance_shapes=5
+angle_001,16.2,14.652801513671932,15.937780877551774,low,clutter_segments=1; nuisance_shapes=2; dark_distractors=0; ray_thickness=12
+angle_002,18.9,15.546264648437472,16.619654152627305,low,clutter_segments=2; nuisance_shapes=3; dark_distractors=0; ray_thickness=12
+angle_003,21.6,21.241451263427734,21.193131166318153,low,clutter_segments=1; nuisance_shapes=4; dark_distractors=0; ray_thickness=12
+angle_004,24.3,23.686912536621122,23.366498434534606,low,clutter_segments=2; nuisance_shapes=2; dark_distractors=0; ray_thickness=12
+angle_005,22.3,21.482494354248047,22.30409902352136,low,clutter_segments=1; nuisance_shapes=3; dark_distractors=0; ray_thickness=12
+angle_006,25.0,22.313568115234375,23.952223342083016,low,clutter_segments=2; nuisance_shapes=4; dark_distractors=0; ray_thickness=12
+angle_007,27.7,26.970279693603516,27.713963532485764,low,clutter_segments=1; nuisance_shapes=2; dark_distractors=0; ray_thickness=12
+angle_008,30.4,31.62210464477539,30.746769693338592,low,clutter_segments=2; nuisance_shapes=3; dark_distractors=0; ray_thickness=12
+angle_009,28.3,26.683631896972656,26.150441112224343,low,clutter_segments=1; nuisance_shapes=4; dark_distractors=0; ray_thickness=12
+angle_010,31.0,28.062469482421875,29.064356140922087,low,clutter_segments=2; nuisance_shapes=2; dark_distractors=0; ray_thickness=12
+angle_011,33.8,36.030717849731445,34.97738410515265,low,clutter_segments=1; nuisance_shapes=3; dark_distractors=0; ray_thickness=12
+angle_012,36.5,36.858551025390625,35.577560055250046,low,clutter_segments=2; nuisance_shapes=4; dark_distractors=0; ray_thickness=12
+angle_013,34.4,33.47968292236328,34.05992580728696,low,clutter_segments=1; nuisance_shapes=2; dark_distractors=0; ray_thickness=12
+angle_014,37.1,39.0097541809082,37.1309318188616,low,clutter_segments=2; nuisance_shapes=3; dark_distractors=0; ray_thickness=12
+angle_015,39.8,141.4911003112793,37.81559102295262,low,clutter_segments=1; nuisance_shapes=4; dark_distractors=0; ray_thickness=12
+angle_016,42.5,42.72315216064453,33.63924287913318,low,clutter_segments=2; nuisance_shapes=2; dark_distractors=0; ray_thickness=12
+angle_017,40.5,41.081787109375,41.064640987261356,low,clutter_segments=1; nuisance_shapes=3; dark_distractors=0; ray_thickness=12
+angle_018,43.2,42.00957489013672,40.76973677580051,low,clutter_segments=2; nuisance_shapes=4; dark_distractors=0; ray_thickness=12
+angle_019,45.9,48.26922607421875,46.87649391919825,low,clutter_segments=1; nuisance_shapes=2; dark_distractors=0; ray_thickness=12
+angle_020,48.6,48.68667793273926,48.76527289091564,low,clutter_segments=2; nuisance_shapes=3; dark_distractors=0; ray_thickness=12
+angle_021,46.5,45.37476348876953,47.960124909142735,low,clutter_segments=1; nuisance_shapes=4; dark_distractors=0; ray_thickness=12
+angle_022,49.2,50.43492126464844,50.78418602500136,low,clutter_segments=2; nuisance_shapes=2; dark_distractors=0; ray_thickness=12
+angle_023,51.9,50.42783546447754,51.08825659783082,low,clutter_segments=1; nuisance_shapes=3; dark_distractors=0; ray_thickness=12
+angle_024,54.7,55.31489562988281,55.528843044319785,low,clutter_segments=2; nuisance_shapes=4; dark_distractors=0; ray_thickness=12
+angle_025,52.6,57.89338827133179,51.74309792841541,medium,clutter_segments=2; nuisance_shapes=3; dark_distractors=0; ray_thickness=12
+angle_026,55.3,50.44232368469238,54.865733579878736,medium,clutter_segments=3; nuisance_shapes=4; dark_distractors=0; ray_thickness=12
+angle_027,58.0,55.98826599121091,56.73114797905089,medium,clutter_segments=2; nuisance_shapes=5; dark_distractors=0; ray_thickness=12
+angle_028,60.7,63.321813106536865,60.87176849706759,medium,clutter_segments=3; nuisance_shapes=3; dark_distractors=0; ray_thickness=12
+angle_029,58.6,60.23078536987302,59.568320520948404,medium,clutter_segments=2; nuisance_shapes=4; dark_distractors=0; ray_thickness=12
+angle_030,61.4,59.82836914062497,61.26846962251469,medium,clutter_segments=3; nuisance_shapes=5; dark_distractors=0; ray_thickness=12
+angle_031,64.1,64.56243896484375,64.1925924177167,medium,clutter_segments=2; nuisance_shapes=3; dark_distractors=0; ray_thickness=12
+angle_032,66.8,65.24858093261716,65.23289045326595,medium,clutter_segments=3; nuisance_shapes=4; dark_distractors=0; ray_thickness=12
+angle_033,64.7,65.23881530761719,64.0984251960706,medium,clutter_segments=2; nuisance_shapes=5; dark_distractors=0; ray_thickness=12
+angle_034,67.4,67.78363418579102,66.79042201290017,medium,clutter_segments=3; nuisance_shapes=3; dark_distractors=0; ray_thickness=12
+angle_035,70.1,73.39093017578128,71.89821166156605,medium,clutter_segments=2; nuisance_shapes=4; dark_distractors=0; ray_thickness=12
+angle_036,72.9,72.65531158447266,73.21127344633531,medium,clutter_segments=3; nuisance_shapes=5; dark_distractors=0; ray_thickness=12
+angle_037,70.8,70.1501693725586,70.17133088814457,medium,clutter_segments=2; nuisance_shapes=3; dark_distractors=0; ray_thickness=12
+angle_038,73.5,73.68420028686523,74.1107155199071,medium,clutter_segments=3; nuisance_shapes=4; dark_distractors=0; ray_thickness=12
+angle_039,76.2,75.59008789062497,75.39183800465537,medium,clutter_segments=2; nuisance_shapes=5; dark_distractors=0; ray_thickness=12
+angle_040,78.9,80.04875576496124,80.2069805835007,medium,clutter_segments=3; nuisance_shapes=3; dark_distractors=0; ray_thickness=12
+angle_041,76.8,76.60126113891602,76.93498560623522,medium,clutter_segments=2; nuisance_shapes=4; dark_distractors=0; ray_thickness=12
+angle_042,79.5,78.06065368652341,79.54352777549167,medium,clutter_segments=3; nuisance_shapes=5; dark_distractors=0; ray_thickness=12
+angle_043,82.3,82.91572570800781,82.4503258296927,medium,clutter_segments=2; nuisance_shapes=3; dark_distractors=0; ray_thickness=12
+angle_044,85.0,83.59409713745117,85.95240953950906,medium,clutter_segments=3; nuisance_shapes=4; dark_distractors=0; ray_thickness=12
+angle_045,82.9,83.30787754058838,83.24728093456747,medium,clutter_segments=2; nuisance_shapes=5; dark_distractors=0; ray_thickness=12
+angle_046,85.6,84.30797672271729,84.81405668951294,medium,clutter_segments=3; nuisance_shapes=3; dark_distractors=0; ray_thickness=12
+angle_047,88.3,88.10767364501953,88.89817412168736,medium,clutter_segments=2; nuisance_shapes=4; dark_distractors=0; ray_thickness=12
+angle_048,91.0,90.5620231628418,90.54586302202767,medium,clutter_segments=3; nuisance_shapes=5; dark_distractors=0; ray_thickness=12
+angle_049,89.0,91.02690696716309,90.4905559676314,high,clutter_segments=3; nuisance_shapes=4; dark_distractors=1; ray_thickness=11
+angle_050,91.7,89.9800148010254,92.11398441288354,high,clutter_segments=4; nuisance_shapes=5; dark_distractors=0; ray_thickness=11
+angle_051,94.4,93.35069274902344,93.42071919685183,high,clutter_segments=3; nuisance_shapes=6; dark_distractors=0; ray_thickness=11
+angle_052,97.1,95.29512596130371,95.31854289410103,high,clutter_segments=4; nuisance_shapes=4; dark_distractors=1; ray_thickness=11
+angle_053,95.0,99.37036180496216,97.63125256000387,high,clutter_segments=3; nuisance_shapes=5; dark_distractors=0; ray_thickness=11
+angle_054,97.7,98.8068618774414,99.31403100564835,high,clutter_segments=4; nuisance_shapes=6; dark_distractors=0; ray_thickness=11
+angle_055,100.5,101.42892456054688,101.30887384937034,high,clutter_segments=3; nuisance_shapes=4; dark_distractors=1; ray_thickness=11
+angle_056,103.2,101.25971984863281,101.81479119916719,high,clutter_segments=4; nuisance_shapes=5; dark_distractors=0; ray_thickness=11
+angle_057,101.1,102.12170791625977,100.56249602886032,high,clutter_segments=3; nuisance_shapes=6; dark_distractors=0; ray_thickness=11
+angle_058,103.8,104.42442321777344,103.9184569569473,high,clutter_segments=4; nuisance_shapes=4; dark_distractors=1; ray_thickness=11
+angle_059,106.5,125.96622467041016,106.01883427600399,high,clutter_segments=3; nuisance_shapes=5; dark_distractors=0; ray_thickness=11
+angle_060,109.2,109.20408630371088,109.7117383286602,high,clutter_segments=4; nuisance_shapes=6; dark_distractors=0; ray_thickness=11
+angle_061,107.1,111.12746524810791,109.58524776714376,high,clutter_segments=3; nuisance_shapes=4; dark_distractors=1; ray_thickness=11
+angle_062,109.9,106.12254333496094,108.31728034718921,high,clutter_segments=4; nuisance_shapes=5; dark_distractors=0; ray_thickness=11
+angle_063,112.6,112.67640686035156,112.66719211461731,high,clutter_segments=3; nuisance_shapes=6; dark_distractors=0; ray_thickness=11
+angle_064,115.3,116.16973114013672,115.75688324588748,high,clutter_segments=4; nuisance_shapes=4; dark_distractors=1; ray_thickness=11
+angle_065,113.2,110.21916389465332,111.74299159261506,high,clutter_segments=3; nuisance_shapes=5; dark_distractors=0; ray_thickness=11
+angle_066,115.9,114.80678176879883,116.62808581879068,high,clutter_segments=4; nuisance_shapes=6; dark_distractors=0; ray_thickness=11
+angle_067,118.6,113.18654632568357,120.40821686293037,high,clutter_segments=3; nuisance_shapes=4; dark_distractors=1; ray_thickness=11
+angle_068,121.4,121.54561424255371,120.99191240170586,high,clutter_segments=4; nuisance_shapes=5; dark_distractors=0; ray_thickness=11
+angle_069,119.3,120.00792694091794,119.53742847451541,high,clutter_segments=3; nuisance_shapes=6; dark_distractors=0; ray_thickness=11
+angle_070,122.0,120.63762664794922,121.09082382746999,high,clutter_segments=4; nuisance_shapes=4; dark_distractors=1; ray_thickness=11
+angle_071,124.7,123.93316650390625,124.13057829164438,high,clutter_segments=3; nuisance_shapes=5; dark_distractors=0; ray_thickness=11
+angle_072,127.4,126.29620742797852,126.04255107716631,high,clutter_segments=4; nuisance_shapes=6; dark_distractors=0; ray_thickness=11
+angle_073,125.3,124.80084228515625,124.77331001011208,extreme,clutter_segments=4; nuisance_shapes=5; dark_distractors=1; ray_thickness=10
+angle_074,128.1,127.12093353271484,127.04523068362539,extreme,clutter_segments=5; nuisance_shapes=6; dark_distractors=0; ray_thickness=10
+angle_075,130.8,131.89315414428708,130.96451373206742,extreme,clutter_segments=4; nuisance_shapes=7; dark_distractors=0; ray_thickness=10
+angle_076,133.5,133.0591278076172,133.50919306097148,extreme,clutter_segments=5; nuisance_shapes=5; dark_distractors=1; ray_thickness=10
+angle_077,131.4,130.45912742614746,129.90230306537478,extreme,clutter_segments=4; nuisance_shapes=6; dark_distractors=0; ray_thickness=10
+angle_078,134.1,132.7761688232422,132.99304878510975,extreme,clutter_segments=5; nuisance_shapes=7; dark_distractors=0; ray_thickness=10
+angle_079,136.8,133.85442352294922,135.03202546702767,extreme,clutter_segments=4; nuisance_shapes=5; dark_distractors=1; ray_thickness=10
+angle_080,139.5,140.08123779296875,140.69500170060354,extreme,clutter_segments=5; nuisance_shapes=6; dark_distractors=0; ray_thickness=10
+angle_081,137.5,129.72241401672363,136.66990469152432,extreme,clutter_segments=4; nuisance_shapes=7; dark_distractors=0; ray_thickness=10
+angle_082,140.2,138.20036697387695,139.20564517788551,extreme,clutter_segments=5; nuisance_shapes=5; dark_distractors=1; ray_thickness=10
+angle_083,142.9,143.8595027923584,143.12373614608634,extreme,clutter_segments=4; nuisance_shapes=6; dark_distractors=0; ray_thickness=10
+angle_084,145.6,146.04441833496094,146.89841898074008,extreme,clutter_segments=5; nuisance_shapes=7; dark_distractors=0; ray_thickness=10
+angle_085,143.5,97.90933227539062,150.18688910429734,extreme,clutter_segments=4; nuisance_shapes=5; dark_distractors=1; ray_thickness=10
+angle_086,146.2,12.755538940429688,163.82012000573616,extreme,clutter_segments=5; nuisance_shapes=6; dark_distractors=0; ray_thickness=10
+angle_087,149.0,138.3431911468506,144.8812959319522,extreme,clutter_segments=4; nuisance_shapes=7; dark_distractors=0; ray_thickness=10
+angle_088,151.7,148.61240768432617,150.30747340215152,extreme,clutter_segments=5; nuisance_shapes=5; dark_distractors=1; ray_thickness=10
+angle_089,149.6,151.6131134033203,148.5221308618643,extreme,clutter_segments=4; nuisance_shapes=6; dark_distractors=0; ray_thickness=10
+angle_090,152.3,153.7997932434082,154.21421584907085,extreme,clutter_segments=5; nuisance_shapes=7; dark_distractors=0; ray_thickness=10
+angle_091,155.0,153.35384368896484,154.60041668789955,extreme,clutter_segments=4; nuisance_shapes=5; dark_distractors=1; ray_thickness=10
+angle_092,157.7,13.199811935424805,18.8144047094178,extreme,clutter_segments=5; nuisance_shapes=6; dark_distractors=0; ray_thickness=10
+angle_093,155.7,160.9280104637146,160.06529978247335,extreme,clutter_segments=4; nuisance_shapes=7; dark_distractors=0; ray_thickness=10
+angle_094,158.4,156.4384765625,157.28929106184574,extreme,clutter_segments=5; nuisance_shapes=5; dark_distractors=1; ray_thickness=10
+angle_095,161.1,161.90836334228516,161.56233980098563,extreme,clutter_segments=4; nuisance_shapes=6; dark_distractors=0; ray_thickness=10
+angle_096,163.8,149.66718435287476,160.5309477610437,extreme,clutter_segments=5; nuisance_shapes=7; dark_distractors=0; ray_thickness=10

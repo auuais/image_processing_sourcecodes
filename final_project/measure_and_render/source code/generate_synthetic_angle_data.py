@@ -15,22 +15,29 @@ class AngleSceneConfig:
     clutter_level: str
     clutter_segments: int
     nuisance_shapes: int
+    dark_distractors: int
+    ray_thickness: int
 
 
-SCENE_CONFIGS = [
-    AngleSceneConfig("angle_01", 24.0, "low", 0, 1),
-    AngleSceneConfig("angle_02", 32.0, "low", 1, 1),
-    AngleSceneConfig("angle_03", 41.0, "low", 1, 2),
-    AngleSceneConfig("angle_04", 55.0, "medium", 2, 2),
-    AngleSceneConfig("angle_05", 68.0, "medium", 2, 2),
-    AngleSceneConfig("angle_06", 82.0, "medium", 2, 3),
-    AngleSceneConfig("angle_07", 97.0, "medium", 3, 3),
-    AngleSceneConfig("angle_08", 109.0, "high", 3, 3),
-    AngleSceneConfig("angle_09", 121.0, "high", 3, 4),
-    AngleSceneConfig("angle_10", 136.0, "high", 4, 4),
-    AngleSceneConfig("angle_11", 48.0, "very_high", 4, 5),
-    AngleSceneConfig("angle_12", 73.0, "very_high", 5, 5),
-]
+def build_scene_configs() -> list[AngleSceneConfig]:
+    configs: list[AngleSceneConfig] = []
+    clutter_levels = ["low", "medium", "high", "extreme"]
+    angles = np.linspace(18.0, 162.0, 96)
+    for index, angle in enumerate(angles):
+        difficulty_index = index // 24
+        clutter_level = clutter_levels[min(difficulty_index, len(clutter_levels) - 1)]
+        configs.append(
+            AngleSceneConfig(
+                sample_id=f"angle_{index + 1:03d}",
+                true_angle_deg=float(round(angle + ((index % 4) - 1.5) * 1.2, 1)),
+                clutter_level=clutter_level,
+                clutter_segments=1 + difficulty_index + (index % 2),
+                nuisance_shapes=2 + difficulty_index + (index % 3),
+                dark_distractors=0 if difficulty_index < 2 else (1 if index % 3 == 0 else 0),
+                ray_thickness=12 if difficulty_index < 2 else 11 if difficulty_index == 2 else 10,
+            )
+        )
+    return configs
 
 
 def endpoint_from_polar(origin: tuple[int, int], angle_deg: float, length: float) -> tuple[int, int]:
@@ -49,51 +56,66 @@ def draw_nuisance_shapes(image: np.ndarray, rng: np.random.Generator, count: int
     colors = palette_bgr()
     height, width = image.shape[:2]
     for index in range(count):
-        color = tuple(int(0.45 * channel + 120) for channel in colors[index % len(colors)])
-        if index % 2 == 0:
-            center = (int(rng.integers(80, width - 80)), int(rng.integers(80, height - 80)))
-            radius = int(rng.integers(18, 42))
+        color = tuple(int(0.45 * channel + 125) for channel in colors[index % len(colors)])
+        if index % 3 == 0:
+            center = (int(rng.integers(60, width - 60)), int(rng.integers(60, height - 60)))
+            radius = int(rng.integers(18, 44))
             cv2.circle(image, center, radius, color, -1, cv2.LINE_AA)
-        else:
-            x0 = int(rng.integers(70, width - 170))
-            y0 = int(rng.integers(70, height - 170))
-            x1 = x0 + int(rng.integers(40, 110))
-            y1 = y0 + int(rng.integers(40, 110))
+        elif index % 3 == 1:
+            x0 = int(rng.integers(60, width - 190))
+            y0 = int(rng.integers(60, height - 190))
+            x1 = x0 + int(rng.integers(45, 125))
+            y1 = y0 + int(rng.integers(45, 125))
             cv2.rectangle(image, (x0, y0), (x1, y1), color, -1, cv2.LINE_AA)
+        else:
+            center = (int(rng.integers(60, width - 60)), int(rng.integers(60, height - 60)))
+            axes = (int(rng.integers(16, 38)), int(rng.integers(10, 24)))
+            angle = float(rng.uniform(0.0, 180.0))
+            cv2.ellipse(image, center, axes, angle, 0.0, 360.0, color, -1, cv2.LINE_AA)
+
+
+def draw_clutter_segments(image: np.ndarray, rng: np.random.Generator, count: int, vertex: tuple[int, int], dark_distractors: int) -> None:
+    height, width = image.shape[:2]
+    for clutter_index in range(count):
+        while True:
+            line_origin = (int(rng.integers(40, width - 40)), int(rng.integers(40, height - 40)))
+            if np.hypot(line_origin[0] - vertex[0], line_origin[1] - vertex[1]) > 165:
+                break
+        clutter_angle = float(rng.uniform(-180.0, 180.0))
+        clutter_length = float(rng.uniform(55.0, 135.0))
+        color_value = 95 + clutter_index * 7
+        draw_ray(image, line_origin, clutter_angle, clutter_length, (color_value, color_value, color_value), thickness=5)
+
+    for _ in range(dark_distractors):
+        while True:
+            line_origin = (int(rng.integers(40, width - 40)), int(rng.integers(40, height - 40)))
+            if np.hypot(line_origin[0] - vertex[0], line_origin[1] - vertex[1]) > 120:
+                break
+        clutter_angle = float(rng.uniform(-180.0, 180.0))
+        clutter_length = float(rng.uniform(70.0, 130.0))
+        draw_ray(image, line_origin, clutter_angle, clutter_length, (58, 58, 58), thickness=6)
 
 
 def render_scene(config: AngleSceneConfig, rng: np.random.Generator) -> np.ndarray:
     image = build_background(IMAGE_SIZE, rng)
     height, width = IMAGE_SIZE
     origin = (
-        width // 2 + int(rng.integers(-35, 36)),
-        height // 2 + int(rng.integers(-35, 36)),
+        width // 2 + int(rng.integers(-70, 71)),
+        height // 2 + int(rng.integers(-70, 71)),
     )
 
-    base_angle = float(rng.uniform(-150.0, 150.0))
+    base_angle = float(rng.uniform(-155.0, 155.0))
     second_angle = base_angle + config.true_angle_deg
-    ray_length_1 = float(rng.uniform(220, 280))
-    ray_length_2 = float(rng.uniform(220, 280))
+    ray_length_1 = float(rng.uniform(210.0, 300.0))
+    ray_length_2 = float(rng.uniform(210.0, 300.0))
 
-    primary_colors = [(35, 35, 35), (55, 55, 55)]
-    draw_ray(image, origin, base_angle, ray_length_1, primary_colors[0], thickness=12)
-    draw_ray(image, origin, second_angle, ray_length_2, primary_colors[1], thickness=12)
-    cv2.circle(image, origin, 11, (235, 235, 235), -1, cv2.LINE_AA)
-    cv2.circle(image, origin, 11, (40, 40, 40), 2, cv2.LINE_AA)
+    primary_colors = [(34, 34, 34), (54, 54, 54)]
+    draw_ray(image, origin, base_angle, ray_length_1, primary_colors[0], thickness=config.ray_thickness)
+    draw_ray(image, origin, second_angle, ray_length_2, primary_colors[1], thickness=config.ray_thickness)
+    cv2.circle(image, origin, 12, (235, 235, 235), -1, cv2.LINE_AA)
+    cv2.circle(image, origin, 12, (38, 38, 38), 2, cv2.LINE_AA)
 
-    for clutter_index in range(config.clutter_segments):
-        while True:
-            line_origin = (
-                int(rng.integers(50, width - 50)),
-                int(rng.integers(50, height - 50)),
-            )
-            if np.hypot(line_origin[0] - origin[0], line_origin[1] - origin[1]) > 170:
-                break
-        clutter_angle = float(rng.uniform(-180, 180))
-        clutter_length = float(rng.uniform(55, 120))
-        clutter_color = (110 + 8 * clutter_index, 110 + 8 * clutter_index, 110 + 8 * clutter_index)
-        draw_ray(image, line_origin, clutter_angle, clutter_length, clutter_color, thickness=5)
-
+    draw_clutter_segments(image, rng, config.clutter_segments, origin, config.dark_distractors)
     draw_nuisance_shapes(image, rng, config.nuisance_shapes)
     return image
 
@@ -103,7 +125,7 @@ def main() -> None:
     rng = np.random.default_rng(DATASET_SEED + 101)
 
     rows: list[dict[str, object]] = []
-    for config in SCENE_CONFIGS:
+    for config in build_scene_configs():
         image = render_scene(config, rng)
         filename = f"{config.sample_id}.png"
         save_image(SYNTHETIC_ANGLE_DIR / filename, image)
@@ -113,14 +135,21 @@ def main() -> None:
                 "filename": filename,
                 "true_angle_deg": f"{config.true_angle_deg:.1f}",
                 "clutter_level": config.clutter_level,
-                "notes": f"clutter_segments={config.clutter_segments}; nuisance_shapes={config.nuisance_shapes}",
+                "notes": (
+                    f"clutter_segments={config.clutter_segments}; "
+                    f"nuisance_shapes={config.nuisance_shapes}; "
+                    f"dark_distractors={config.dark_distractors}; "
+                    f"ray_thickness={config.ray_thickness}"
+                ),
+                "split": "synthetic",
+                "source_dataset": "synthetic_angle",
             }
         )
 
     write_csv(
         ANGLE_METADATA_PATH,
         rows,
-        fieldnames=["sample_id", "filename", "true_angle_deg", "clutter_level", "notes"],
+        fieldnames=["sample_id", "filename", "true_angle_deg", "clutter_level", "notes", "split", "source_dataset"],
     )
     print(f"Generated {len(rows)} synthetic angle samples in {SYNTHETIC_ANGLE_DIR}")
 

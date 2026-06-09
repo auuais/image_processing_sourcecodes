@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from pathlib import Path
 
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 
-from common import AngleSample, add_measurement_footer, ensure_task_output_dirs, finalize_figure, load_color_image, plot_bgr, plot_gray, read_angle_metadata, render_coordinate_grid, save_image, write_csv, write_text
+from baselines import angle_prompt, format_angle_text, render_angle_som_overlay, save_variant_image
+from common import AngleSample, TRUST_DELTA_ANGLE, add_measurement_footer, ensure_task_output_dirs, finalize_figure, load_color_image, plot_bgr, read_angle_metadata, render_coordinate_grid, slugify_delta, write_csv, write_text
 from generate_synthetic_angle_data import main as generate_angle_data
 from harness import PromptVariant, TaskBenchmarkResult, summarize_numeric_predictions, write_manifest
 
@@ -34,11 +36,12 @@ class AngleResult:
     candidate_visual: np.ndarray
     baseline_angle_deg: float
     scaffold_angle_deg: float
+    scaffold_ray_a: FittedRay
+    scaffold_ray_b: FittedRay
     overlay_baseline: np.ndarray
     overlay_pixels_only: np.ndarray
     overlay_grid: np.ndarray
-    overlay_both: np.ndarray
-    measurement_text: str
+    overlay_som: np.ndarray
 
 
 def normalize_angle_180(angle_deg: float) -> float:
@@ -129,7 +132,7 @@ def line_intersection(line_a: CandidateLine, line_b: CandidateLine) -> np.ndarra
 def estimate_vertex(lines: list[CandidateLine], image_shape: tuple[int, ...], radius: float = 34.0) -> np.ndarray:
     height, width = image_shape[:2]
     image_center = np.array([width / 2.0, height / 2.0], dtype=np.float32)
-    ranked = sorted(lines, key=lambda item: item.length, reverse=True)[:20]
+    ranked = sorted(lines, key=lambda item: item.length, reverse=True)[:24]
 
     intersections: list[np.ndarray] = []
     for index, line_a in enumerate(ranked):
@@ -270,23 +273,15 @@ def draw_arc(overlay: np.ndarray, center: np.ndarray, start_angle_deg: float, en
     cv2.polylines(overlay, [np.array(points, dtype=np.int32)], False, color, 3, cv2.LINE_AA)
 
 
-def draw_angle_overlay(image: np.ndarray, ray_a: FittedRay, ray_b: FittedRay, angle_deg: float) -> np.ndarray:
+def draw_angle_overlay(image: np.ndarray, ray_a: FittedRay, ray_b: FittedRay, arc_angle_deg: float, label_value: float | None = None) -> np.ndarray:
     overlay = image.copy()
     center = ray_a.vertex
+    shown_value = arc_angle_deg if label_value is None else label_value
     cv2.line(overlay, (int(center[0]), int(center[1])), ray_endpoint(ray_a), (50, 200, 50), 4, cv2.LINE_AA)
     cv2.line(overlay, (int(center[0]), int(center[1])), ray_endpoint(ray_b), (60, 140, 240), 4, cv2.LINE_AA)
     draw_arc(overlay, center, ray_a.angle_deg, ray_b.angle_deg, radius=64, color=(210, 100, 210))
     cv2.circle(overlay, (int(center[0]), int(center[1])), 8, (30, 30, 30), -1, cv2.LINE_AA)
-    cv2.putText(
-        overlay,
-        f"{angle_deg:.1f} deg",
-        (int(center[0]) + 24, int(center[1]) - 18),
-        cv2.FONT_HERSHEY_SIMPLEX,
-        0.8,
-        (30, 30, 30),
-        2,
-        cv2.LINE_AA,
-    )
+    cv2.putText(overlay, f"{shown_value:.1f} deg", (int(center[0]) + 24, int(center[1]) - 18), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (30, 30, 30), 2, cv2.LINE_AA)
     return overlay
 
 
@@ -314,65 +309,103 @@ def measure_angle(sample: AngleSample) -> AngleResult:
 
     scaffold_ray_a, scaffold_ray_b = pick_scaffold_rays(selected_lines, vertex)
     scaffold_angle_deg = ray_angle_difference(scaffold_ray_a, scaffold_ray_b)
-    measurement_text = f"Classical CV measurement: the angle between the two principal rays is {scaffold_angle_deg:.1f} degrees."
 
     baseline_overlay = draw_angle_overlay(image, baseline_ray_a, baseline_ray_b, baseline_angle_deg)
     pixels_overlay = draw_angle_overlay(image, scaffold_ray_a, scaffold_ray_b, scaffold_angle_deg)
     grid_overlay = render_coordinate_grid(image)
-    both_overlay = add_measurement_footer(pixels_overlay, measurement_text)
+    som_overlay = render_angle_som_overlay(
+        image,
+        (int(scaffold_ray_a.vertex[0]), int(scaffold_ray_a.vertex[1])),
+        ray_endpoint(scaffold_ray_a),
+        ray_endpoint(scaffold_ray_b),
+    )
 
     return AngleResult(
         edges=edges,
         candidate_visual=build_candidate_visual(image, selected_lines, vertex),
         baseline_angle_deg=baseline_angle_deg,
         scaffold_angle_deg=scaffold_angle_deg,
+        scaffold_ray_a=scaffold_ray_a,
+        scaffold_ray_b=scaffold_ray_b,
         overlay_baseline=baseline_overlay,
         overlay_pixels_only=pixels_overlay,
         overlay_grid=grid_overlay,
-        overlay_both=both_overlay,
-        measurement_text=measurement_text,
+        overlay_som=som_overlay,
     )
 
 
-def save_sample_figure(per_sample_dir, sample: AngleSample, image: np.ndarray, result: AngleResult) -> None:
+def save_sample_figure(per_sample_dir: Path, sample: AngleSample, image: np.ndarray, result: AngleResult) -> None:
     fig, axes = plt.subplots(2, 2, figsize=(14, 12))
     plot_bgr(axes[0, 0], image, f"{sample.sample_id}: raw image")
-    plot_bgr(axes[0, 1], result.candidate_visual, "Hough candidates near inferred vertex")
+    plot_bgr(axes[0, 1], result.candidate_visual, "Candidate lines near inferred vertex")
     plot_bgr(axes[1, 0], result.overlay_baseline, f"Naive Hough baseline ({result.baseline_angle_deg:.1f} deg)")
     plot_bgr(axes[1, 1], result.overlay_pixels_only, f"Scaffold measurement ({result.scaffold_angle_deg:.1f} deg)")
     finalize_figure(fig, per_sample_dir / f"{sample.sample_id}_summary.png")
 
 
-def build_prompt_variants(variants_dir, sample: AngleSample, image: np.ndarray, result: AngleResult) -> list[PromptVariant]:
-    raw_path = save_image(variants_dir / "raw" / f"{sample.sample_id}.png", image)
-    pixels_path = save_image(variants_dir / "pixels_only" / f"{sample.sample_id}.png", result.overlay_pixels_only)
-    grid_path = save_image(variants_dir / "grid" / f"{sample.sample_id}.png", result.overlay_grid)
-    both_path = save_image(variants_dir / "both" / f"{sample.sample_id}.png", result.overlay_both)
+def write_prompt_file(text_prompt_dir: Path, sample_id: str, condition: str, prompt: str) -> None:
+    safe_condition = condition.replace("+", "p").replace("-", "m")
+    write_text(text_prompt_dir / f"{sample_id}_{safe_condition}.txt", prompt + "\n")
 
-    prompt_base = "Estimate the angle in degrees between the two main rays in the image. Answer with a single number."
-    text_only_prompt = f"{prompt_base} {result.measurement_text}"
-    both_prompt = f"{prompt_base} Use the overlaid arc and the provided measurement text."
-    raw_prompt = prompt_base
-    pixels_prompt = f"{prompt_base} Use the overlaid principal rays and arc."
-    grid_prompt = "Estimate the angle in degrees between the two main rays in this grid-labeled image. Answer with a single number."
 
-    (variants_dir / "text_prompts" / f"{sample.sample_id}.txt").write_text(text_only_prompt + "\n", encoding="utf-8")
+def build_prompt_variants(variants_dir: Path, sample: AngleSample, image: np.ndarray, result: AngleResult) -> list[PromptVariant]:
+    raw_path = save_variant_image(variants_dir, "raw", sample.sample_id, image)
+    grid_path = save_variant_image(variants_dir, "grid", sample.sample_id, result.overlay_grid)
+    som_path = save_variant_image(variants_dir, "som", sample.sample_id, result.overlay_som)
+    pixels_path = save_variant_image(variants_dir, "pixels", sample.sample_id, result.overlay_pixels_only)
 
-    expected = f"{sample.true_angle_deg:.1f}"
-    return [
-        PromptVariant("angle", sample.sample_id, "raw", str(raw_path), raw_prompt, expected, result.measurement_text),
-        PromptVariant("angle", sample.sample_id, "pixels_only", str(pixels_path), pixels_prompt, expected, result.measurement_text),
-        PromptVariant("angle", sample.sample_id, "text_only", str(raw_path), text_only_prompt, expected, result.measurement_text),
-        PromptVariant("angle", sample.sample_id, "both", str(both_path), both_prompt, expected, result.measurement_text),
-        PromptVariant("angle", sample.sample_id, "grid", str(grid_path), grid_prompt, expected, result.measurement_text),
+    measured_value = float(result.scaffold_angle_deg)
+    measured_text = format_angle_text(measured_value)
+    both_image = add_measurement_footer(result.overlay_pixels_only, measured_text)
+    both_path = save_variant_image(variants_dir, "both", sample.sample_id, both_image)
+
+    variants = [
+        PromptVariant("angle", sample.sample_id, sample.split, sample.source_dataset, sample.clutter_level, sample.notes, "raw", "raw", str(raw_path), angle_prompt("raw"), f"{sample.true_angle_deg:.1f}", float(sample.true_angle_deg), 5.0, "", None, 0.0, "degrees"),
+        PromptVariant("angle", sample.sample_id, sample.split, sample.source_dataset, sample.clutter_level, sample.notes, "cot", "cot", str(raw_path), angle_prompt("cot"), f"{sample.true_angle_deg:.1f}", float(sample.true_angle_deg), 5.0, "", None, 0.0, "degrees"),
+        PromptVariant("angle", sample.sample_id, sample.split, sample.source_dataset, sample.clutter_level, sample.notes, "grid", "grid", str(grid_path), angle_prompt("grid"), f"{sample.true_angle_deg:.1f}", float(sample.true_angle_deg), 5.0, "", None, 0.0, "degrees"),
+        PromptVariant("angle", sample.sample_id, sample.split, sample.source_dataset, sample.clutter_level, sample.notes, "som", "som", str(som_path), angle_prompt("som"), f"{sample.true_angle_deg:.1f}", float(sample.true_angle_deg), 5.0, "", None, 0.0, "degrees"),
+        PromptVariant("angle", sample.sample_id, sample.split, sample.source_dataset, sample.clutter_level, sample.notes, "pixels", "pixels", str(pixels_path), angle_prompt("pixels"), f"{sample.true_angle_deg:.1f}", float(sample.true_angle_deg), 5.0, measured_text, float(measured_value), 0.0, "degrees"),
+        PromptVariant("angle", sample.sample_id, sample.split, sample.source_dataset, sample.clutter_level, sample.notes, "text", "text", str(raw_path), angle_prompt("text", measured_text), f"{sample.true_angle_deg:.1f}", float(sample.true_angle_deg), 5.0, measured_text, float(measured_value), 0.0, "degrees"),
+        PromptVariant("angle", sample.sample_id, sample.split, sample.source_dataset, sample.clutter_level, sample.notes, "both", "both", str(both_path), angle_prompt("both", measured_text), f"{sample.true_angle_deg:.1f}", float(sample.true_angle_deg), 5.0, measured_text, float(measured_value), 0.0, "degrees"),
     ]
 
+    write_prompt_file(variants_dir / "text_prompts", sample.sample_id, "text", angle_prompt("text", measured_text))
+    write_prompt_file(variants_dir / "text_prompts", sample.sample_id, "both", angle_prompt("both", measured_text))
 
-def write_results_markdown(path, rows: list[dict[str, object]], baseline_summary, scaffold_summary) -> None:
+    for delta in TRUST_DELTA_ANGLE:
+        injected_value = measured_value + float(delta)
+        perturbation_text = format_angle_text(injected_value)
+        suffix = f"delta_{slugify_delta(delta)}"
+
+        perturbed_pixels = draw_angle_overlay(image, result.scaffold_ray_a, result.scaffold_ray_b, result.scaffold_angle_deg, label_value=injected_value)
+        perturbed_pixels_path = save_variant_image(variants_dir, "pixels", sample.sample_id, perturbed_pixels, suffix=suffix)
+        perturbed_both_image = add_measurement_footer(perturbed_pixels, perturbation_text)
+        perturbed_both_path = save_variant_image(variants_dir, "both", sample.sample_id, perturbed_both_image, suffix=suffix)
+
+        pixels_condition = f"pixels_delta_{slugify_delta(delta)}"
+        text_condition = f"text_delta_{slugify_delta(delta)}"
+        both_condition = f"both_delta_{slugify_delta(delta)}"
+        text_prompt = angle_prompt("text", perturbation_text)
+        both_prompt = angle_prompt("both", perturbation_text)
+
+        variants.extend(
+            [
+                PromptVariant("angle", sample.sample_id, sample.split, sample.source_dataset, sample.clutter_level, sample.notes, pixels_condition, "pixels", str(perturbed_pixels_path), angle_prompt("pixels"), f"{sample.true_angle_deg:.1f}", float(sample.true_angle_deg), 5.0, perturbation_text, float(injected_value), float(delta), "degrees"),
+                PromptVariant("angle", sample.sample_id, sample.split, sample.source_dataset, sample.clutter_level, sample.notes, text_condition, "text", str(raw_path), text_prompt, f"{sample.true_angle_deg:.1f}", float(sample.true_angle_deg), 5.0, perturbation_text, float(injected_value), float(delta), "degrees"),
+                PromptVariant("angle", sample.sample_id, sample.split, sample.source_dataset, sample.clutter_level, sample.notes, both_condition, "both", str(perturbed_both_path), both_prompt, f"{sample.true_angle_deg:.1f}", float(sample.true_angle_deg), 5.0, perturbation_text, float(injected_value), float(delta), "degrees"),
+            ]
+        )
+        write_prompt_file(variants_dir / "text_prompts", sample.sample_id, text_condition, text_prompt)
+        write_prompt_file(variants_dir / "text_prompts", sample.sample_id, both_condition, both_prompt)
+
+    return variants
+
+
+def write_results_markdown(path: Path, rows: list[dict[str, object]], baseline_summary, scaffold_summary) -> None:
     lines = [
-        "# Angle Benchmark",
+        "# Angle Measurement Quality",
         "",
-        "Synthetic angle-measurement benchmark for Measure-and-Render.",
+        "This appendix reports classical measurement quality, which is only a precondition for the frozen-VLM study.",
         "",
         "## Aggregate results",
         "",
@@ -396,21 +429,22 @@ def write_results_markdown(path, rows: list[dict[str, object]], baseline_summary
     write_text(path, "\n".join(lines) + "\n")
 
 
-def save_summary_plot(path, rows: list[dict[str, object]]) -> None:
+def save_summary_plot(path: Path, rows: list[dict[str, object]]) -> None:
     sample_ids = [str(row["sample_id"]) for row in rows]
     truth = np.array([float(row["true_angle_deg"]) for row in rows])
     baseline = np.array([float(row["baseline_angle_deg"]) for row in rows])
     scaffold = np.array([float(row["scaffold_angle_deg"]) for row in rows])
 
     x = np.arange(len(rows))
-    fig, ax = plt.subplots(figsize=(14, 6))
+    fig, ax = plt.subplots(figsize=(16, 6))
     ax.plot(x, truth, marker="o", linewidth=2.5, label="Ground truth")
-    ax.plot(x, baseline, marker="s", linewidth=2.0, label="Naive Hough baseline")
-    ax.plot(x, scaffold, marker="^", linewidth=2.0, label="Vertex-clustered ray scaffold")
-    ax.set_xticks(x)
-    ax.set_xticklabels(sample_ids, rotation=30, ha="right")
+    ax.plot(x, baseline, marker="s", linewidth=1.7, label="Naive Hough baseline")
+    ax.plot(x, scaffold, marker="^", linewidth=1.7, label="Vertex-clustered ray scaffold")
+    step = max(1, len(rows) // 16)
+    ax.set_xticks(x[::step])
+    ax.set_xticklabels(sample_ids[::step], rotation=30, ha="right")
     ax.set_ylabel("Angle (degrees)")
-    ax.set_title("Synthetic angle benchmark")
+    ax.set_title("Angle measurement quality precondition")
     ax.grid(True, alpha=0.3)
     ax.legend()
     finalize_figure(fig, path)
@@ -445,11 +479,7 @@ def run_angle_benchmark() -> TaskBenchmarkResult:
             }
         )
 
-    write_csv(
-        paths["metrics_path"],
-        metric_rows,
-        fieldnames=["sample_id", "true_angle_deg", "baseline_angle_deg", "scaffold_angle_deg", "clutter_level", "notes"],
-    )
+    write_csv(paths["metrics_path"], metric_rows, fieldnames=["sample_id", "true_angle_deg", "baseline_angle_deg", "scaffold_angle_deg", "clutter_level", "notes"])
     write_manifest(paths["manifest_path"], manifest_variants)
 
     baseline_summary = summarize_numeric_predictions(baseline_pairs, exact_tolerance=1.0)

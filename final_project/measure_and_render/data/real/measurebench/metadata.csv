@@ -1,0 +1,13 @@
+sample_id,filename,question,answer,category,notes,split,source_dataset
+measurebench_001,measurebench_001.png,What is the reading of the instrument?,"{""interval"": [9.5, 9.7], ""units"": [""A"", ""Ampere""]}",ammeter,source=FlagEval/MeasureBench,real,MeasureBench
+measurebench_002,measurebench_002.png,What is the reading of the instrument?,"{""interval"": [6, 9], ""units"": [""mA"", ""milliampere""]}",ammeter,source=FlagEval/MeasureBench,real,MeasureBench
+measurebench_003,measurebench_003.png,What is the reading of the instrument?,"{""interval"": [45, 47], ""units"": [""A"", ""Ampere""]}",ammeter,source=FlagEval/MeasureBench,real,MeasureBench
+measurebench_004,measurebench_004.png,What is the reading of the ammeter,"{""interval"": [40, 40], ""units"": [""A"", ""ampere""]}",ammeter,source=FlagEval/MeasureBench,real,MeasureBench
+measurebench_005,measurebench_005.png,What is the reading of the ammeter,"{""interval"": [20, 20], ""units"": [""kA"", ""kiloampere""]}",ammeter,source=FlagEval/MeasureBench,real,MeasureBench
+measurebench_006,measurebench_006.png,What is the reading of the ammeter,"{""interval"": [2000, 2000], ""units"": [""A"", ""ampere""]}",ammeter,source=FlagEval/MeasureBench,real,MeasureBench
+measurebench_007,measurebench_007.png,What is the reading of the ammeter,"{""interval"": [200, 200], ""units"": [""A"", ""ampere""]}",ammeter,source=FlagEval/MeasureBench,real,MeasureBench
+measurebench_008,measurebench_008.png,What is the reading of the ammeter,"{""interval"": [1, 1], ""units"": [""A"", ""ampere""]}",ammeter,source=FlagEval/MeasureBench,real,MeasureBench
+measurebench_009,measurebench_009.png,What is the reading of the ammeter,"{""interval"": [0.3, 0.5], ""units"": [""A"", ""ampere""]}",ammeter,source=FlagEval/MeasureBench,real,MeasureBench
+measurebench_010,measurebench_010.png,What is the reading of the ammeter,"{""interval"": [20, 20], ""units"": [""A"", ""ampere""]}",ammeter,source=FlagEval/MeasureBench,real,MeasureBench
+measurebench_011,measurebench_011.png,What is the reading of the ammeter,"{""interval"": [300, 300], ""units"": [""A"", ""ampere""]}",ammeter,source=FlagEval/MeasureBench,real,MeasureBench
+measurebench_012,measurebench_012.png,What is the reading of the ammeter,"{""interval"": [1, 1], ""units"": [""A"", ""ampere""]}",ammeter,source=FlagEval/MeasureBench,real,MeasureBench

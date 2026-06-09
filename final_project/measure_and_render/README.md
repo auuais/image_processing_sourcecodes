@@ -1,91 +1,95 @@
 # Measure-and-Render
 
-Measure-and-Render is the lecture-11 final-project implementation for a narrow but defensible research claim:
-use classical computer vision to measure task-relevant geometry, render that measurement back into the image, and test whether a frozen VLM benefits more from the pixel channel, the text channel, or both.
+Measure-and-Render is the lecture-11 final project turned into a frozen-VLM study. The contribution is no longer the classical measurement pipeline by itself. The contribution is a **training-free, label-free bridge** from deterministic classical-CV measurements into the VLM text pathway, evaluated under clean and controlled-error conditions.
 
-The project is positioned against generic scaffolds such as grids, axes, or neural region marks. The differentiator here is that the scaffold is content-adaptive and metric: watershed counts, Hough-style angle measurements, and later ruler or gauge readings.
+## What is implemented
 
-## Current scope
-
-The repository now contains a reproducible local research suite with two task families:
-
-- `counting`: split touching objects with thresholding, morphology, distance transform, and watershed
-- `angle`: detect and fit principal rays with dark-structure segmentation, Hough line proposals, intersection-based vertex estimation, and cluster-level line fitting
-
-For each task, the pipeline produces VLM-ready variants for:
-
-- `raw`
-- `pixels_only`
-- `text_only`
-- `both`
-- `grid`
-
-That means the codebase already supports the core RQ2 study design even before a real VLM is attached.
+- Classical counting scaffold:
+  - saturation thresholding
+  - morphology
+  - distance transform
+  - watershed
+  - centroid and moment extraction
+- Classical angle scaffold:
+  - dark-structure segmentation
+  - Hough line proposals
+  - vertex estimation from intersections
+  - ray-direction clustering
+  - `fitLine` refinement
+- Frozen-VLM adapters with disk caching:
+  - local Hugging Face models
+  - Ollama
+  - optional OpenAI / Anthropic / Gemini APIs
+- De-leaked evaluation conditions:
+  - `raw`
+  - `cot`
+  - `grid`
+  - `som`
+  - `pixels`
+  - `text`
+  - `both`
+- Trust-under-error perturbations:
+  - counting: `delta in {-3, -1, +1, +3}`
+  - angle: `delta in {-10, -5, +5, +10}` degrees
 
 ## Research framing
 
-- `RQ1`: does a classical metric scaffold improve performance over a weaker baseline on precise visual tasks?
-- `RQ2`: for the same exact measurement, is it better to communicate through rendered pixels, injected text, or both?
-- `RQ3`: does a deterministic measure-render-reask loop help further?
-- `RQ4`: when the classical CV measurement is wrong or fragile, does the scaffold help or mislead?
+The comparable target is [`docs/COMPARISON_PROTOCOL.md`](C:\Users\USER\Documents\course_Translations\Computer_vision\final_project\measure_and_render\docs\COMPARISON_PROTOCOL.md), which aligns this repo to:
 
-The current code directly addresses `RQ1` and prepares the artifacts needed for `RQ2`. The loop study and error-sensitivity analysis are the next publishable extensions.
+- `arXiv:2603.06459` for continuous-angle `MAE` framing and the frozen-feature versus text-pathway deficit
+- `MeasureBench` for numeric parsing conventions and measurement-readout positioning
 
-## Local results
+The central claim is narrower than the 2026 probe paper:
 
-Current suite summary from `output/suite/suite_summary.csv`:
+> A deterministic classical-CV scaffold can expose geometry to a frozen VLM's text pathway without training a probe or LoRA.
 
-- `counting`: baseline MAE `3.000`, scaffold MAE `0.083`, baseline exact `8.33%`, scaffold exact `91.67%`
-- `angle`: baseline MAE `1.372`, scaffold MAE `1.064`, baseline within-1deg `50.00%`, scaffold within-1deg `58.33%`
+The central limitation is also explicit:
 
-Interpretation:
+> When the scaffold is wrong, the model often follows it.
 
-- counting already shows a strong scaffold win and is the cleanest local evidence for the project claim
-- angle broadens the method beyond counting and shows the same measurement-and-render pattern on geometric reasoning
+## Current outputs
 
-## Folder structure
+- [`output/appendix/MEASUREMENT_PRECONDITION.md`](C:\Users\USER\Documents\course_Translations\Computer_vision\final_project\measure_and_render\output\appendix\MEASUREMENT_PRECONDITION.md): classical measurement quality as a precondition, not the dependent variable
+- [`output/vlm/summary.csv`](C:\Users\USER\Documents\course_Translations\Computer_vision\final_project\measure_and_render\output\vlm\summary.csv): frozen-VLM metrics by condition and model
+- [`output/vlm/trust_under_error_summary.csv`](C:\Users\USER\Documents\course_Translations\Computer_vision\final_project\measure_and_render\output\vlm\trust_under_error_summary.csv): trust-under-error metrics aggregated by `|delta|`
+- [`output/vlm/RESULTS.md`](C:\Users\USER\Documents\course_Translations\Computer_vision\final_project\measure_and_render\output\vlm\RESULTS.md): headline findings
+- [`output/comparison/COMPARISON.md`](C:\Users\USER\Documents\course_Translations\Computer_vision\final_project\measure_and_render\output\comparison\COMPARISON.md): side-by-side interpretation against `2603.06459`
 
-- `data/synthetic_counting/`: synthetic counting benchmark plus metadata
-- `data/synthetic_angle/`: synthetic angle benchmark plus metadata
-- `source code/common.py`: shared paths, image utilities, and metadata readers
-- `source code/harness.py`: metric summaries, confidence intervals, and manifest utilities
-- `source code/counting_task.py`: counting benchmark and render pipeline
-- `source code/angle_task.py`: angle benchmark and render pipeline
-- `source code/generate_synthetic_counting_data.py`: counting data generator
-- `source code/generate_synthetic_angle_data.py`: angle data generator
-- `source code/run_counting_demo.py`: run the counting task only
-- `source code/run_angle_demo.py`: run the angle task only
-- `source code/run_research_suite.py`: regenerate both tasks and the combined suite outputs
-- `source code/vlm_adapters.py`: adapter stub for future VLM evaluation
-- `output/counting/`: counting metrics, variants, and diagnostics
-- `output/angle/`: angle metrics, variants, and diagnostics
-- `output/suite/`: combined manifest, summary CSV, summary markdown, and comparison plot
+## Main scripts
+
+- [`source code/run_counting_demo.py`](C:\Users\USER\Documents\course_Translations\Computer_vision\final_project\measure_and_render\source%20code\run_counting_demo.py)
+- [`source code/run_angle_demo.py`](C:\Users\USER\Documents\course_Translations\Computer_vision\final_project\measure_and_render\source%20code\run_angle_demo.py)
+- [`source code/run_research_suite.py`](C:\Users\USER\Documents\course_Translations\Computer_vision\final_project\measure_and_render\source%20code\run_research_suite.py)
+- [`source code/run_vlm_eval.py`](C:\Users\USER\Documents\course_Translations\Computer_vision\final_project\measure_and_render\source%20code\run_vlm_eval.py)
+- [`source code/trust_under_error.py`](C:\Users\USER\Documents\course_Translations\Computer_vision\final_project\measure_and_render\source%20code\trust_under_error.py)
+- [`source code/build_reports.py`](C:\Users\USER\Documents\course_Translations\Computer_vision\final_project\measure_and_render\source%20code\build_reports.py)
+- [`source code/vlm_adapters.py`](C:\Users\USER\Documents\course_Translations\Computer_vision\final_project\measure_and_render\source%20code\vlm_adapters.py)
 
 ## Run
 
 From `C:\Users\USER\Documents\course_Translations\Computer_vision\final_project\measure_and_render`:
 
 ```powershell
-python "source code\run_counting_demo.py"
-python "source code\run_angle_demo.py"
 python "source code\run_research_suite.py"
+python "source code\run_vlm_eval.py" --task angle --model qwen2.5-vl-3b --conditions all
+python "source code\trust_under_error.py"
+python "source code\build_reports.py"
 ```
 
-## What makes this publishable
+Useful bounded runs:
 
-The project is not "another overlay." The publishable angle is the combination of:
+```powershell
+python "source code\run_vlm_eval.py" --task angle --model smolvlm2-2.2b --conditions all --limit 8
+python "source code\run_vlm_eval.py" --task counting --model qwen2.5-vl-3b --conditions raw,pixels,text,both --limit 12
+```
 
-- deterministic classical-CV measurement instead of a generic reference frame
-- task-specific rendered metrics instead of generic marks
-- a controlled pixel-versus-text channel comparison for the same measurement
-- honest failure analysis when classical CV becomes unreliable
+## Environment
 
-That is a realistic workshop-tier contribution if the next evaluation stage is executed carefully.
+- Windows is supported directly.
+- A 10 GB GPU can run `Qwen2.5-VL-3B-Instruct` in 4-bit in this repo.
+- CPU and Ollama fallbacks remain available.
+- Cache keys are `sha256(image_bytes + prompt + model_id)`, so reruns are effectively free once cached.
 
-## Next steps
+## Real-data hook
 
-1. Attach at least one real VLM in `vlm_adapters.py` and run the combined manifest across `raw`, `pixels_only`, `text_only`, `both`, and `grid`.
-2. Add the remaining proposal scaffolds: gauge, ruler, and contour-based comparison.
-3. Add generic-grid and Set-of-Mark style baselines for a cleaner external comparison table.
-4. Run a deterministic loop condition for `RQ3`.
-5. Add scaffold-confidence or injected-error studies for `RQ4`.
+`data/real/` and [`source code/fetch_real_subsets.py`](C:\Users\USER\Documents\course_Translations\Computer_vision\final_project\measure_and_render\source%20code\fetch_real_subsets.py) stage a small FSC147 counting subset and a MeasureBench subset with attribution metadata. The current checkout includes a 12-image MeasureBench slice; FSC147 was rate-limited in this environment and is documented in `data/real/SOURCES.md`. These assets are auxiliary context for the repo and are not the current headline comparison table, which is based on the continuous-angle scaffold benchmark.

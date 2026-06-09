@@ -1,0 +1,15 @@
+numpy
+opencv-python
+matplotlib
+pillow
+requests
+torch
+torchvision
+transformers>=4.49
+accelerate
+datasets
+sentencepiece
+einops
+jinja2>=3.1
+qwen-vl-utils
+bitsandbytes; platform_system != "Windows"

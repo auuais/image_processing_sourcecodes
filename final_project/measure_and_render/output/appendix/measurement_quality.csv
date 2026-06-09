@@ -1,0 +1,3 @@
+task,baseline_name,scaffold_name,baseline_mae,scaffold_mae,baseline_rmse,scaffold_rmse,baseline_exact_accuracy,scaffold_exact_accuracy,baseline_tolerance_accuracy,scaffold_tolerance_accuracy,baseline_mae_ci_low,baseline_mae_ci_high,scaffold_mae_ci_low,scaffold_mae_ci_high
+counting,connected_components,watershed_scaffold,3.3542,0.0625,3.6742,0.2500,0.0104,0.9375,0.0104,0.9375,3.0625,3.6458,0.0208,0.1146
+angle,naive_hough,vertex_clustered_ray_scaffold,6.3320,2.7494,23.3163,14.3901,0.0000,0.0000,0.3958,0.5833,2.4298,11.4296,1.0118,5.8316
